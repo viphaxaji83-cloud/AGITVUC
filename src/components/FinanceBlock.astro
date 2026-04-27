@@ -1,0 +1,54 @@
+---
+import Container from './ui/Container.astro';
+import SectionTitle from './ui/SectionTitle.astro';
+import Card from './ui/Card.astro';
+import Icon from './ui/Icon.astro';
+import DisclaimerNote from './ui/DisclaimerNote.astro';
+import { financeItems, financeDisclaimer } from '../data/finance';
+---
+
+<section
+  id="finance"
+  class="section bg-gradient-to-b from-white via-brand-50/30 to-white anchor-offset"
+>
+  <Container class="flex flex-col gap-10">
+    <SectionTitle
+      eyebrow="Финансовые условия"
+      title="Какие выплаты и льготы могут обсуждаться"
+      subtitle="Конкретные суммы и условия определяются законодательством, ведомственными актами и условиями контракта. Сведения требуют подтверждения по официальным документам."
+    />
+
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        financeItems.map((item) => (
+          <Card hoverable class="flex flex-col gap-3 h-full">
+            <div class="flex items-center gap-3">
+              <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+                <Icon name={item.iconKey} size={22} />
+              </span>
+              <h3 class="text-lg font-semibold text-ink-900">
+                {item.title}
+              </h3>
+            </div>
+            <p class="text-sm text-ink-600 leading-relaxed">
+              {item.description}
+            </p>
+            <div class="mt-2 rounded-xl border border-dashed border-ink-200 bg-ink-50/60 px-3 py-2.5">
+              <span class="text-xs font-medium uppercase tracking-wider text-ink-500">
+                Сумма
+              </span>
+              <p class="mt-0.5 text-sm font-semibold text-ink-800">
+                {item.amount ?? 'Уточняется на консультации'}
+              </p>
+            </div>
+            <p class="mt-auto text-xs text-ink-500 leading-relaxed">
+              {item.note}
+            </p>
+          </Card>
+        ))
+      }
+    </div>
+
+    <DisclaimerNote text={financeDisclaimer} />
+  </Container>
+</section>

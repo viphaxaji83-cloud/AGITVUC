@@ -1,0 +1,30 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  text: string;
+  variant?: 'info' | 'soft';
+  class?: string;
+}
+
+const { text, variant = 'info', class: className = '' } = Astro.props;
+
+const styles =
+  variant === 'soft'
+    ? 'bg-ink-50 border-ink-200 text-ink-600'
+    : 'bg-brand-50/70 border-brand-100 text-brand-900';
+---
+
+<aside
+  role="note"
+  class:list={[
+    'flex items-start gap-3 rounded-xl border px-4 py-3 text-sm leading-relaxed',
+    styles,
+    className,
+  ]}
+>
+  <span class="mt-0.5 text-brand-700">
+    <Icon name="shield-info" size={20} />
+  </span>
+  <span>{text}</span>
+</aside>

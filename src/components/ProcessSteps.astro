@@ -1,0 +1,60 @@
+---
+import Container from './ui/Container.astro';
+import SectionTitle from './ui/SectionTitle.astro';
+import Card from './ui/Card.astro';
+import Icon from './ui/Icon.astro';
+import { processSteps } from '../data/contacts';
+---
+
+<section id="process" class="section anchor-offset">
+  <Container class="flex flex-col gap-10">
+    <SectionTitle
+      eyebrow="Как всё проходит"
+      title="Семь спокойных шагов от заявки до подготовки"
+      subtitle="Каждый шаг можно остановить, обдумать и обсудить. Решение остаётся за вами и должно быть осознанным."
+      align="center"
+      class="mx-auto"
+    />
+
+    <ol class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        processSteps.map((step, i) => (
+          <Card
+            as="li"
+            class="relative flex flex-col gap-3 h-full"
+            variant={i === processSteps.length - 1 ? 'gradient' : 'default'}
+            hoverable
+          >
+            <div class="flex items-center gap-3">
+              <span
+                class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-700 text-white font-semibold"
+                aria-hidden="true"
+              >
+                {step.number}
+              </span>
+              <h3 class="text-lg font-semibold text-ink-900">
+                {step.title}
+              </h3>
+            </div>
+            <p class="text-sm text-ink-600 leading-relaxed">
+              {step.description}
+            </p>
+            {i < processSteps.length - 1 && (
+              <span
+                class="hidden lg:block absolute -right-2 top-7 text-brand-300"
+                aria-hidden="true"
+              >
+                <Icon name="arrow-right" size={20} />
+              </span>
+            )}
+          </Card>
+        ))
+      }
+    </ol>
+
+    <p class="text-center text-sm text-ink-500 max-w-2xl mx-auto">
+      Подписание контракта — добровольное действие. Нормально брать паузу,
+      перепроверять документы и задавать столько вопросов, сколько необходимо.
+    </p>
+  </Container>
+</section>

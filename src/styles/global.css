@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --color-bg: 255 255 255;
+    --color-fg: 15 23 42;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0s !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0s !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  body {
+    @apply bg-white text-ink-800 antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  ::selection {
+    background-color: rgb(59 130 246 / 0.18);
+    color: rgb(15 23 42);
+  }
+
+  :focus-visible {
+    outline: 2px solid theme('colors.brand.600');
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-ink-900;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    text-underline-offset: 3px;
+  }
+
+  details > summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  details > summary::-webkit-details-marker {
+    display: none;
+  }
+}
+
+@layer components {
+  .section {
+    @apply py-16 sm:py-20 lg:py-24;
+  }
+
+  .anchor-offset {
+    scroll-margin-top: 6rem;
+  }
+
+  .gradient-hero {
+    background:
+      radial-gradient(
+        1200px 600px at 80% -10%,
+        rgba(59, 130, 246, 0.15),
+        transparent 60%
+      ),
+      radial-gradient(
+        900px 500px at -10% 30%,
+        rgba(29, 78, 216, 0.12),
+        transparent 60%
+      ),
+      linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  }
+
+  .tricolor-bar {
+    background: linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #ffffff 33.3%,
+      #0039a6 33.3%,
+      #0039a6 66.6%,
+      #d62718 66.6%,
+      #d62718 100%
+    );
+  }
+
+  .skip-link {
+    @apply sr-only;
+  }
+  .skip-link:focus-visible {
+    @apply not-sr-only fixed left-4 top-4 z-50 rounded-lg bg-white px-4 py-2 text-brand-800 shadow-soft;
+  }
+}

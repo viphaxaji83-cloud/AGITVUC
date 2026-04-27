@@ -1,0 +1,127 @@
+---
+import Container from './ui/Container.astro';
+import Button from './ui/Button.astro';
+import Icon from './ui/Icon.astro';
+import { site } from '../data/site';
+---
+
+<header class="sticky top-0 z-40 border-b border-ink-200/70 bg-white/85 backdrop-blur-md">
+  <Container class="flex h-16 items-center justify-between gap-6">
+    <a
+      href="/"
+      class="flex items-center gap-3 group"
+      aria-label={`${site.shortName} — на главную`}
+    >
+      <span
+        class="relative inline-flex h-9 w-9 items-center justify-center rounded-xl bg-brand-700 text-white shadow-soft"
+        aria-hidden="true"
+      >
+        <span class="text-sm font-bold tracking-tight">{site.shortName}</span>
+      </span>
+      <span class="hidden sm:flex flex-col leading-tight">
+        <span class="text-sm font-semibold text-ink-900">
+          {site.name}
+        </span>
+        <span class="text-xs text-ink-500">{site.university}</span>
+      </span>
+    </a>
+
+    <nav
+      class="hidden lg:flex items-center gap-1"
+      aria-label="Основная навигация"
+    >
+      {
+        site.nav.slice(0, 6).map((item) => (
+          <a
+            href={item.href}
+            class="rounded-lg px-3 py-2 text-sm font-medium text-ink-700 hover:text-brand-800 hover:bg-brand-50 transition-colors"
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="hidden lg:flex items-center gap-2">
+      <Button href="#contacts" variant="primary" size="sm">
+        Получить консультацию
+      </Button>
+    </div>
+
+    <button
+      type="button"
+      id="menu-toggle"
+      class="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-ink-200 text-ink-700 hover:bg-ink-50"
+      aria-controls="mobile-menu"
+      aria-expanded="false"
+      aria-label="Открыть меню"
+    >
+      <span data-icon="open"><Icon name="menu" /></span>
+      <span data-icon="close" class="hidden"><Icon name="close" /></span>
+    </button>
+  </Container>
+
+  <div
+    id="mobile-menu"
+    class="lg:hidden hidden border-t border-ink-200 bg-white"
+    role="dialog"
+    aria-modal="false"
+    aria-label="Мобильное меню"
+  >
+    <Container class="py-4">
+      <nav aria-label="Мобильная навигация" class="flex flex-col gap-1">
+        {
+          site.nav.map((item) => (
+            <a
+              href={item.href}
+              class="rounded-lg px-3 py-3 text-base font-medium text-ink-800 hover:bg-brand-50 hover:text-brand-800"
+              data-mobile-link
+            >
+              {item.label}
+            </a>
+          ))
+        }
+      </nav>
+      <div class="mt-4">
+        <Button href="#contacts" variant="primary" fullWidth>
+          Получить консультацию
+        </Button>
+      </div>
+    </Container>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  const openIcon = toggle?.querySelector('[data-icon="open"]');
+  const closeIcon = toggle?.querySelector('[data-icon="close"]');
+
+  const setOpen = (open: boolean) => {
+    if (!toggle || !menu) return;
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute(
+      'aria-label',
+      open ? 'Закрыть меню' : 'Открыть меню',
+    );
+    menu.classList.toggle('hidden', !open);
+    openIcon?.classList.toggle('hidden', open);
+    closeIcon?.classList.toggle('hidden', !open);
+  };
+
+  toggle?.addEventListener('click', () => {
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    setOpen(!expanded);
+  });
+
+  menu
+    ?.querySelectorAll<HTMLAnchorElement>('[data-mobile-link]')
+    .forEach((link) => {
+      link.addEventListener('click', () => setOpen(false));
+    });
+
+  const mq = window.matchMedia('(min-width: 1024px)');
+  mq.addEventListener('change', (e) => {
+    if (e.matches) setOpen(false);
+  });
+</script>

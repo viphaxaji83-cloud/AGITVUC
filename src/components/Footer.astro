@@ -1,0 +1,107 @@
+---
+import Container from './ui/Container.astro';
+import Icon from './ui/Icon.astro';
+import { site } from '../data/site';
+import { contacts } from '../data/contacts';
+import { directions } from '../data/directions';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-auto border-t border-ink-200 bg-white">
+  <div class="tricolor-bar h-1 w-full" aria-hidden="true"></div>
+  <Container class="py-12 sm:py-14">
+    <div class="grid gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-4 flex flex-col gap-4">
+        <div class="flex items-center gap-3">
+          <span
+            class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-brand-700 text-white"
+            aria-hidden="true"
+          >
+            <span class="text-sm font-bold">{site.shortName}</span>
+          </span>
+          <span class="text-base font-semibold text-ink-900">
+            {site.name}
+          </span>
+        </div>
+        <p class="text-sm text-ink-600 leading-relaxed">
+          {site.legalDisclaimer}
+        </p>
+      </div>
+
+      <div class="lg:col-span-3">
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-ink-500">
+          Разделы
+        </h2>
+        <ul class="mt-4 grid gap-2 text-sm">
+          {
+            site.nav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="text-ink-700 hover:text-brand-800"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="lg:col-span-3">
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-ink-500">
+          Направления
+        </h2>
+        <ul class="mt-4 grid gap-2 text-sm">
+          {
+            directions.map((d) => (
+              <li>
+                <a
+                  href={`/directions/${d.slug}/`}
+                  class="text-ink-700 hover:text-brand-800"
+                >
+                  {d.title}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="lg:col-span-2 flex flex-col gap-3 text-sm">
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-ink-500">
+          Контакты
+        </h2>
+        <a
+          href={contacts.phoneHref}
+          class="flex items-center gap-2 text-ink-700 hover:text-brand-800"
+        >
+          <Icon name="phone" size={16} />
+          {contacts.phone}
+        </a>
+        <a
+          href={`mailto:${contacts.email}`}
+          class="flex items-center gap-2 text-ink-700 hover:text-brand-800"
+        >
+          <Icon name="mail" size={16} />
+          {contacts.email}
+        </a>
+        <span class="flex items-start gap-2 text-ink-600">
+          <Icon name="pin" size={16} />
+          <span>{contacts.address}</span>
+        </span>
+      </div>
+    </div>
+
+    <div
+      class="mt-10 flex flex-col gap-2 border-t border-ink-200 pt-6 text-xs text-ink-500 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <span>© {year} {site.university}. {site.shortName}.</span>
+      <span>
+        Информационный материал. Все условия проверяются по официальным
+        документам.
+      </span>
+    </div>
+  </Container>
+</footer>

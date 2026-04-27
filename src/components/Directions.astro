@@ -1,0 +1,73 @@
+---
+import Container from './ui/Container.astro';
+import SectionTitle from './ui/SectionTitle.astro';
+import Card from './ui/Card.astro';
+import Icon from './ui/Icon.astro';
+import Button from './ui/Button.astro';
+import DisclaimerNote from './ui/DisclaimerNote.astro';
+import { directions } from '../data/directions';
+---
+
+<section id="directions" class="section bg-ink-50/60 anchor-offset">
+  <Container class="flex flex-col gap-10">
+    <SectionTitle
+      eyebrow="Направления"
+      title="Какие направления могут рассматриваться"
+      subtitle="Перечень носит ориентировочный характер. Конкретный набор направлений и требования зависят от подразделения и условий контракта."
+    />
+
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        directions.map((d) => (
+          <Card hoverable class="flex flex-col gap-4 h-full">
+            <div class="flex items-start justify-between gap-3">
+              <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-700 text-white">
+                <Icon name={d.iconKey} size={22} />
+              </span>
+              <span class="text-xs font-medium uppercase tracking-wider text-ink-500">
+                {d.short}
+              </span>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-ink-900">{d.title}</h3>
+              <p class="mt-2 text-sm text-ink-600 leading-relaxed">
+                {d.description}
+              </p>
+            </div>
+
+            <ul class="space-y-2 text-sm text-ink-700">
+              {d.highlights.map((h) => (
+                <li class="flex items-start gap-2">
+                  <span class="mt-0.5 text-brand-700">
+                    <Icon name="check" size={16} />
+                  </span>
+                  <span>{h}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div class="mt-auto flex flex-col gap-3 pt-2">
+              <span class="inline-flex items-start gap-1.5 rounded-md bg-brand-50 px-2 py-1.5 text-xs text-brand-800">
+                <Icon name="shield-info" size={14} />
+                {d.availabilityNote}
+              </span>
+              <Button
+                href={`/directions/${d.slug}/`}
+                variant="secondary"
+                size="sm"
+                class="self-start"
+              >
+                Подробнее
+                <Icon name="arrow-right" size={16} />
+              </Button>
+            </div>
+          </Card>
+        ))
+      }
+    </div>
+
+    <DisclaimerNote
+      text="Информация о направлениях носит справочный характер. Доступность, требования и состав программы уточняются на официальной консультации."
+    />
+  </Container>
+</section>

@@ -1,0 +1,227 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import Container from './ui/Container.astro';
+import Card from './ui/Card.astro';
+import Button from './ui/Button.astro';
+import Icon from './ui/Icon.astro';
+import DisclaimerNote from './ui/DisclaimerNote.astro';
+import SectionTitle from './ui/SectionTitle.astro';
+import { directions, type Direction } from '../data/directions';
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const direction = directions.find((d) => d.slug === slug) as Direction;
+
+if (!direction) {
+  throw new Error(`Direction "${slug}" not found in data/directions.ts`);
+}
+
+const others = directions.filter((d) => d.slug !== slug).slice(0, 4);
+---
+
+<BaseLayout
+  title={direction.title}
+  description={`${direction.short}. ${direction.description}`}
+>
+  <Header />
+
+  <main id="main">
+    <section class="gradient-hero anchor-offset">
+      <Container class="py-12 sm:py-16">
+        <nav
+          class="mb-6 flex items-center gap-2 text-sm text-ink-500"
+          aria-label="Хлебные крошки"
+        >
+          <a href="/" class="hover:text-brand-800">Главная</a>
+          <span aria-hidden="true">/</span>
+          <a href="/#directions" class="hover:text-brand-800">Направления</a>
+          <span aria-hidden="true">/</span>
+          <span class="text-ink-700">{direction.title}</span>
+        </nav>
+
+        <div class="grid gap-10 lg:grid-cols-12 lg:items-start">
+          <div class="lg:col-span-8 flex flex-col gap-6">
+            <span
+              class="inline-flex items-center gap-2 self-start rounded-full border border-brand-100 bg-white/80 px-3 py-1 text-xs font-medium text-brand-800"
+            >
+              Направление подготовки
+            </span>
+            <h1
+              class="text-3xl sm:text-4xl lg:text-5xl font-semibold leading-tight tracking-tight text-ink-900"
+            >
+              {direction.title}
+            </h1>
+            <p class="text-lg text-ink-600 max-w-2xl leading-relaxed">
+              {direction.description}
+            </p>
+
+            <DisclaimerNote text={direction.availabilityNote} />
+
+            <div class="flex flex-wrap gap-3">
+              <Button href="/#contacts" size="lg">
+                Получить консультацию
+                <Icon name="arrow-right" size={18} />
+              </Button>
+              <Button href="/#faq" variant="secondary" size="lg">
+                Частые вопросы
+              </Button>
+            </div>
+          </div>
+
+          <div class="lg:col-span-4">
+            <Card variant="gradient" class="flex flex-col gap-3">
+              <span
+                class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand-700 text-white"
+                aria-hidden="true"
+              >
+                <Icon name={direction.iconKey} size={26} />
+              </span>
+              <h2 class="text-lg font-semibold text-ink-900">
+                Что входит в подготовку
+              </h2>
+              <ul class="grid gap-2 text-sm text-ink-700">
+                {
+                  direction.highlights.map((h) => (
+                    <li class="flex items-start gap-2">
+                      <span class="mt-0.5 text-brand-700">
+                        <Icon name="check" size={16} />
+                      </span>
+                      <span>{h}</span>
+                    </li>
+                  ))
+                }
+              </ul>
+            </Card>
+          </div>
+        </div>
+      </Container>
+    </section>
+
+    <section class="section">
+      <Container class="grid gap-10 lg:grid-cols-12">
+        <div class="lg:col-span-7 flex flex-col gap-6">
+          <SectionTitle
+            eyebrow="Содержание подготовки"
+            title="Темы для обсуждения на консультации"
+            subtitle="Точный объём и состав программы определяются ответственным подразделением. Список ниже — отправная точка для разговора."
+          />
+
+          <ol class="grid gap-3 sm:grid-cols-2">
+            {
+              [
+                {
+                  title: 'Учебный план',
+                  text: 'Какие дисциплины и в каком объёме предполагает направление.',
+                },
+                {
+                  title: 'Практические задачи',
+                  text: 'Какие прикладные задачи решают специалисты этого профиля.',
+                },
+                {
+                  title: 'Требования к подготовке',
+                  text: 'Какие знания и навыки желательны на старте, а какие развиваются в процессе.',
+                },
+                {
+                  title: 'Документы и порядок',
+                  text: 'Какие документы потребуются и в какой последовательности.',
+                },
+              ].map((item, i) => (
+                <Card as="li" class="flex flex-col gap-2 h-full">
+                  <span
+                    class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-brand-700 font-semibold"
+                    aria-hidden="true"
+                  >
+                    {i + 1}
+                  </span>
+                  <h3 class="text-base font-semibold text-ink-900">
+                    {item.title}
+                  </h3>
+                  <p class="text-sm text-ink-600 leading-relaxed">
+                    {item.text}
+                  </p>
+                </Card>
+              ))
+            }
+          </ol>
+        </div>
+
+        <div class="lg:col-span-5">
+          <Card variant="soft" class="flex flex-col gap-4">
+            <h2 class="text-lg font-semibold text-ink-900">
+              Что важно учесть
+            </h2>
+            <ul class="grid gap-3 text-sm text-ink-700">
+              <li class="flex items-start gap-2">
+                <span class="mt-0.5 text-brand-700">
+                  <Icon name="shield-info" size={18} />
+                </span>
+                <span>
+                  Все условия — выплаты, обязанности, льготы — определяются
+                  контрактом и нормативными актами.
+                </span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="mt-0.5 text-brand-700">
+                  <Icon name="shield-info" size={18} />
+                </span>
+                <span>
+                  Принимать решение лучше после консультации и спокойного
+                  изучения документов.
+                </span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="mt-0.5 text-brand-700">
+                  <Icon name="shield-info" size={18} />
+                </span>
+                <span>
+                  Любые вопросы можно задать без подписания каких-либо
+                  обязательств.
+                </span>
+              </li>
+            </ul>
+          </Card>
+        </div>
+      </Container>
+    </section>
+
+    <section class="section bg-ink-50/60">
+      <Container class="flex flex-col gap-8">
+        <SectionTitle
+          eyebrow="Другие направления"
+          title="С чем ещё можно ознакомиться"
+        />
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {
+            others.map((d) => (
+              <Card hoverable class="flex flex-col gap-3 h-full">
+                <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+                  <Icon name={d.iconKey} size={22} />
+                </span>
+                <h3 class="text-base font-semibold text-ink-900">
+                  {d.title}
+                </h3>
+                <p class="text-sm text-ink-600 leading-relaxed">
+                  {d.short}
+                </p>
+                <a
+                  href={`/directions/${d.slug}/`}
+                  class="mt-auto inline-flex items-center gap-1 text-sm font-medium text-brand-800 hover:text-brand-900"
+                >
+                  Подробнее
+                  <Icon name="arrow-right" size={16} />
+                </a>
+              </Card>
+            ))
+          }
+        </div>
+      </Container>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

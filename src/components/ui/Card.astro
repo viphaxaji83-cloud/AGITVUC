@@ -1,0 +1,43 @@
+---
+type CardVariant = 'default' | 'soft' | 'outline' | 'gradient';
+
+interface Props {
+  class?: string;
+  as?: keyof HTMLElementTagNameMap;
+  variant?: CardVariant;
+  hoverable?: boolean;
+  id?: string;
+}
+
+const {
+  class: className = '',
+  as: Tag = 'div',
+  variant = 'default',
+  hoverable = false,
+  id,
+}: Props = Astro.props;
+
+const variants: Record<CardVariant, string> = {
+  default: 'bg-white border border-ink-200',
+  soft: 'bg-ink-50 border border-ink-200/60',
+  outline: 'bg-transparent border border-ink-200',
+  gradient:
+    'bg-gradient-to-br from-white via-brand-50/40 to-white border border-brand-100',
+};
+
+const hover = hoverable
+  ? 'transition-all duration-200 hover:border-brand-300 hover:shadow-soft hover:-translate-y-0.5'
+  : '';
+---
+
+<Tag
+  id={id}
+  class:list={[
+    'rounded-2xl p-5 sm:p-6',
+    variants[variant],
+    hover,
+    className,
+  ]}
+>
+  <slot />
+</Tag>

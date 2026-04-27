@@ -1,0 +1,45 @@
+---
+import Container from './ui/Container.astro';
+import SectionTitle from './ui/SectionTitle.astro';
+import Card from './ui/Card.astro';
+import Icon from './ui/Icon.astro';
+import { benefits } from '../data/benefits';
+---
+
+<section id="benefits" class="section anchor-offset">
+  <Container class="flex flex-col gap-10">
+    <SectionTitle
+      eyebrow="Почему это может быть интересно"
+      title="Что даёт спокойное и осознанное знакомство с темой"
+      subtitle="Ниже — нейтральное описание возможных аспектов. Конкретные условия и доступность зависят от документов и индивидуальной ситуации."
+    />
+
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        benefits.map((b, i) => (
+          <Card
+            hoverable
+            variant={i === 0 ? 'gradient' : 'default'}
+            class="flex flex-col gap-3 h-full"
+          >
+            <div class="flex items-center gap-3">
+              <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+                <Icon name={b.iconKey} size={22} />
+              </span>
+              <h3 class="text-lg font-semibold text-ink-900">{b.title}</h3>
+            </div>
+            <p class="text-sm sm:text-base text-ink-600 leading-relaxed">
+              {b.description}
+            </p>
+            {b.note && (
+              <span class="mt-auto inline-flex items-center gap-1.5 self-start rounded-md bg-brand-50 px-2 py-1 text-xs font-medium text-brand-800">
+                <Icon name="shield-info" size={14} />
+                {b.note}
+              </span>
+            )}
+          </Card>
+        ))
+      }
+    </div>
+  </Container>
+</section>

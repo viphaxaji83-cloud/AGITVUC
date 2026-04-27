@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Container from '../components/ui/Container.astro';
+import Button from '../components/ui/Button.astro';
+import Icon from '../components/ui/Icon.astro';
+---
+
+<BaseLayout title="Страница не найдена" noindex>
+  <Header />
+  <main id="main" class="flex-1">
+    <section class="section">
+      <Container class="flex flex-col items-center text-center gap-6 max-w-2xl">
+        <span
+          class="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-50 text-brand-700"
+          aria-hidden="true"
+        >
+          <Icon name="shield-info" size={32} />
+        </span>
+        <h1 class="text-4xl sm:text-5xl font-semibold text-ink-900 tracking-tight">
+          Страница не найдена
+        </h1>
+        <p class="text-lg text-ink-600">
+          Возможно, ссылка устарела или была введена с ошибкой. Вы можете
+          вернуться на главную или сразу перейти к консультации.
+        </p>
+        <div class="flex flex-wrap gap-3 justify-center">
+          <Button href="/" size="lg">На главную</Button>
+          <Button href="/#contacts" variant="secondary" size="lg">
+            Получить консультацию
+          </Button>
+        </div>
+      </Container>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

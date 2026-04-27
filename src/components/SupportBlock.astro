@@ -1,0 +1,39 @@
+---
+import Container from './ui/Container.astro';
+import SectionTitle from './ui/SectionTitle.astro';
+import Card from './ui/Card.astro';
+import Icon from './ui/Icon.astro';
+import DisclaimerNote from './ui/DisclaimerNote.astro';
+import { supportTopics } from '../data/support';
+---
+
+<section id="support" class="section bg-ink-50/60 anchor-offset">
+  <Container class="flex flex-col gap-10">
+    <SectionTitle
+      eyebrow="Социальная поддержка"
+      title="Темы, которые можно обсудить"
+      subtitle="Ниже — список возможных вопросов для консультации. Состав конкретных мер поддержки зависит от ситуации и подтверждается официальными документами."
+    />
+
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {
+        supportTopics.map((s) => (
+          <Card hoverable class="flex flex-col gap-3 h-full">
+            <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-ink-200 text-brand-700">
+              <Icon name={s.iconKey} size={22} />
+            </span>
+            <h3 class="text-base font-semibold text-ink-900">{s.title}</h3>
+            <p class="text-sm text-ink-600 leading-relaxed">
+              {s.description}
+            </p>
+          </Card>
+        ))
+      }
+    </div>
+
+    <DisclaimerNote
+      variant="soft"
+      text="Перечень мер поддержки — ориентировочный. Доступность каждой меры подтверждается на консультации и в официальных документах."
+    />
+  </Container>
+</section>

@@ -1,0 +1,294 @@
+---
+import Container from './ui/Container.astro';
+import SectionTitle from './ui/SectionTitle.astro';
+import Card from './ui/Card.astro';
+import Icon from './ui/Icon.astro';
+import Button from './ui/Button.astro';
+import DisclaimerNote from './ui/DisclaimerNote.astro';
+import { directions } from '../data/directions';
+import { contacts } from '../data/contacts';
+import { site } from '../data/site';
+---
+
+<section id="contacts" class="section anchor-offset">
+  <Container class="grid gap-10 lg:grid-cols-12">
+    <div class="lg:col-span-5 flex flex-col gap-6">
+      <SectionTitle
+        eyebrow="Контакты и заявка"
+        title="Запишитесь на консультацию"
+        subtitle="Заполните короткую форму или свяжитесь напрямую. Мы перезвоним и спокойно ответим на ваши вопросы. Заявка не обязывает к подписанию каких-либо документов."
+      />
+
+      <Card variant="soft" class="flex flex-col gap-4">
+        <div class="grid gap-3 text-sm">
+          <a
+            href={contacts.phoneHref}
+            class="flex items-center gap-3 group"
+          >
+            <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-ink-200 text-brand-700">
+              <Icon name="phone" size={20} />
+            </span>
+            <div>
+              <div class="text-xs uppercase tracking-wider text-ink-500">
+                Телефон
+              </div>
+              <div class="text-base font-medium text-ink-900 group-hover:text-brand-800">
+                {contacts.phone}
+              </div>
+            </div>
+          </a>
+          <a
+            href={`mailto:${contacts.email}`}
+            class="flex items-center gap-3 group"
+          >
+            <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-ink-200 text-brand-700">
+              <Icon name="mail" size={20} />
+            </span>
+            <div>
+              <div class="text-xs uppercase tracking-wider text-ink-500">
+                Email
+              </div>
+              <div class="text-base font-medium text-ink-900 group-hover:text-brand-800">
+                {contacts.email}
+              </div>
+            </div>
+          </a>
+          <div class="flex items-center gap-3">
+            <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-ink-200 text-brand-700">
+              <Icon name="pin" size={20} />
+            </span>
+            <div>
+              <div class="text-xs uppercase tracking-wider text-ink-500">
+                Адрес
+              </div>
+              <div class="text-base font-medium text-ink-900">
+                {contacts.address}
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-ink-200 text-brand-700">
+              <Icon name="clock" size={20} />
+            </span>
+            <div>
+              <div class="text-xs uppercase tracking-wider text-ink-500">
+                График работы
+              </div>
+              <div class="text-base font-medium text-ink-900">
+                {contacts.workingHours}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-xl bg-white border border-ink-200 px-3 py-2.5 text-sm">
+          <span class="text-xs uppercase tracking-wider text-ink-500">
+            Ответственное подразделение
+          </span>
+          <div class="text-ink-800 font-medium">
+            {contacts.responsibleUnit}
+          </div>
+        </div>
+
+        <a
+          href={contacts.officialDocsUrl}
+          class="inline-flex items-center gap-2 text-sm font-medium text-brand-800 hover:text-brand-900"
+        >
+          {contacts.officialDocsLabel}
+          <Icon name="arrow-right" size={16} />
+        </a>
+      </Card>
+    </div>
+
+    <div class="lg:col-span-7">
+      <Card class="flex flex-col gap-5" variant="default">
+        <form
+          id="contact-form"
+          action="/api/contact"
+          method="POST"
+          novalidate
+          class="grid gap-4 sm:grid-cols-2"
+          aria-describedby="form-helper"
+        >
+          <div class="sm:col-span-1">
+            <label for="name" class="block text-sm font-medium text-ink-800">
+              Имя <span class="text-accent-red">*</span>
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              required
+              autocomplete="name"
+              class="mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 placeholder:text-ink-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
+              placeholder="Как к вам обращаться"
+            />
+          </div>
+
+          <div class="sm:col-span-1">
+            <label for="phone" class="block text-sm font-medium text-ink-800">
+              Телефон <span class="text-accent-red">*</span>
+            </label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              required
+              autocomplete="tel"
+              inputmode="tel"
+              class="mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 placeholder:text-ink-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
+              placeholder="+7 ___ ___ __ __"
+            />
+          </div>
+
+          <div class="sm:col-span-1">
+            <label for="email" class="block text-sm font-medium text-ink-800">
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              class="mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 placeholder:text-ink-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
+              placeholder="you@example.com"
+            />
+          </div>
+
+          <div class="sm:col-span-1">
+            <label
+              for="direction"
+              class="block text-sm font-medium text-ink-800"
+            >
+              Направление интереса
+            </label>
+            <select
+              id="direction"
+              name="direction"
+              class="mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
+            >
+              <option value="">Не определился(-ась)</option>
+              {
+                directions.map((d) => (
+                  <option value={d.slug}>{d.title}</option>
+                ))
+              }
+            </select>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="status" class="block text-sm font-medium text-ink-800">
+              Статус студента
+            </label>
+            <select
+              id="status"
+              name="status"
+              class="mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
+            >
+              <option value="">Выберите вариант</option>
+              <option value="bachelor">Бакалавриат</option>
+              <option value="specialist">Специалитет</option>
+              <option value="master">Магистратура</option>
+              <option value="postgrad">Аспирантура</option>
+              <option value="college">Колледж / СПО</option>
+              <option value="other">Другое</option>
+            </select>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label
+              for="comment"
+              class="block text-sm font-medium text-ink-800"
+            >
+              Комментарий
+            </label>
+            <textarea
+              id="comment"
+              name="comment"
+              rows="4"
+              class="mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 placeholder:text-ink-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
+              placeholder="Если есть конкретные вопросы — напишите здесь"
+            ></textarea>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="flex items-start gap-3 text-sm text-ink-700">
+              <input
+                type="checkbox"
+                name="consent"
+                required
+                class="mt-1 h-5 w-5 rounded border-ink-300 text-brand-700 focus:ring-brand-500"
+              />
+              <span>
+                Я соглашаюсь на обработку персональных данных в соответствии с
+                <a href="#" class="text-brand-800 underline hover:text-brand-900">
+                  политикой обработки персональных данных
+                </a>
+                {site.shortName}.
+              </span>
+            </label>
+          </div>
+
+          <div
+            id="form-helper"
+            class="sm:col-span-2 text-xs text-ink-500 leading-relaxed"
+          >
+            Поля, отмеченные звёздочкой, обязательны. Заявка ни к чему не
+            обязывает — это запись на консультацию.
+          </div>
+
+          <div class="sm:col-span-2 flex flex-col-reverse sm:flex-row sm:items-center gap-3 sm:gap-4">
+            <p
+              id="form-status"
+              class="text-sm text-ink-600 min-h-[1.25rem]"
+              role="status"
+              aria-live="polite"
+            >
+            </p>
+            <Button type="submit" size="lg" class="sm:ml-auto">
+              Оставить заявку
+              <Icon name="arrow-right" size={18} />
+            </Button>
+          </div>
+        </form>
+      </Card>
+
+      <DisclaimerNote
+        class="mt-4"
+        variant="soft"
+        text="Форма пока работает в демонстрационном режиме: данные не отправляются во внешние сервисы. Подключите backend в /src/pages/api/contact.ts."
+      />
+    </div>
+  </Container>
+</section>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const status = document.getElementById('form-status');
+
+  if (form && status) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      status.textContent = 'Отправляем заявку…';
+      status.className = 'text-sm text-ink-600 min-h-[1.25rem]';
+
+      const data = new FormData(form);
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { Accept: 'application/json' },
+        });
+        if (!res.ok) throw new Error('network');
+        status.textContent =
+          'Спасибо! Заявка получена. Мы свяжемся с вами в рабочее время.';
+        status.className = 'text-sm text-brand-800 min-h-[1.25rem] font-medium';
+        form.reset();
+      } catch {
+        status.textContent =
+          'Не удалось отправить заявку. Попробуйте позже или напишите напрямую.';
+        status.className = 'text-sm text-accent-red min-h-[1.25rem] font-medium';
+      }
+    });
+  }
+</script>
