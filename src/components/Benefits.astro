@@ -1,45 +1,414 @@
 ---
 import Container from './ui/Container.astro';
-import SectionTitle from './ui/SectionTitle.astro';
-import Card from './ui/Card.astro';
 import Icon from './ui/Icon.astro';
-import { benefits } from '../data/benefits';
+
+const slides = [
+  {
+    eyebrow: 'Общие выплаты',
+    title: 'По официальным документам',
+    tone: 'red',
+  },
+  {
+    eyebrow: 'Специальный контракт',
+    title: 'Условия и срок обсуждаются на консультации',
+    tone: 'blue',
+  },
+  {
+    eyebrow: 'Направления БПЛА',
+    title: 'Операторские и технические роли',
+    tone: 'red',
+  },
+  {
+    eyebrow: 'Обучение',
+    title: 'Индивидуальная образовательная траектория',
+    tone: 'blue',
+  },
+  {
+    eyebrow: 'Поддержка',
+    title: 'Сопровождение университета',
+    tone: 'red',
+  },
+];
 ---
 
-<section id="benefits" class="section anchor-offset">
-  <Container class="flex flex-col gap-10">
-    <SectionTitle
-      eyebrow="Почему это может быть интересно"
-      title="Что даёт спокойное и осознанное знакомство с темой"
-      subtitle="Ниже — нейтральное описание возможных аспектов. Конкретные условия и доступность зависят от документов и индивидуальной ситуации."
-    />
+<section
+  id="benefits"
+  class="benefits-slider anchor-offset"
+  data-benefits-carousel
+>
+  <Container class="!max-w-[1380px]">
+    <div class="benefits-carousel" aria-label="Ключевые условия и преимущества">
+      <button
+        type="button"
+        class="benefits-arrow benefits-arrow--prev"
+        aria-label="Предыдущая карточка"
+        data-benefits-prev
+      >
+        <Icon name="arrow-right" size={24} class="rotate-180" />
+      </button>
 
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {
-        benefits.map((b, i) => (
-          <Card
-            hoverable
-            variant={i === 0 ? 'gradient' : 'default'}
-            class="flex flex-col gap-3 h-full"
-          >
-            <div class="flex items-center gap-3">
-              <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
-                <Icon name={b.iconKey} size={22} />
+      <div class="benefits-stack" aria-live="polite">
+        {
+          slides.map((slide, index) => (
+            <button
+              type="button"
+              class:list={[
+                'benefit-slide',
+                slide.tone === 'blue'
+                  ? 'benefit-slide--blue'
+                  : 'benefit-slide--red',
+              ]}
+              data-benefit-slide
+              data-slide-index={index}
+              data-slot={index}
+              aria-current={index === 0 ? 'true' : 'false'}
+              aria-label={`Показать карточку: ${slide.eyebrow}`}
+            >
+              <span class="benefit-slide__number" aria-hidden="true">
+                {index + 1}
               </span>
-              <h3 class="text-lg font-semibold text-ink-900">{b.title}</h3>
-            </div>
-            <p class="text-sm sm:text-base text-ink-600 leading-relaxed">
-              {b.description}
-            </p>
-            {b.note && (
-              <span class="mt-auto inline-flex items-center gap-1.5 self-start rounded-md bg-brand-50 px-2 py-1 text-xs font-medium text-brand-800">
-                <Icon name="shield-info" size={14} />
-                {b.note}
-              </span>
-            )}
-          </Card>
-        ))
-      }
+              <span class="benefit-slide__eyebrow">{slide.eyebrow}</span>
+              <span class="benefit-slide__title">{slide.title}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <button
+        type="button"
+        class="benefits-arrow benefits-arrow--next"
+        aria-label="Следующая карточка"
+        data-benefits-next
+      >
+        <Icon name="arrow-right" size={24} />
+      </button>
     </div>
   </Container>
 </section>
+
+<style>
+  .benefits-slider {
+    overflow: hidden;
+    background: #ecefff;
+    padding-block: clamp(76px, 7vw, 132px);
+  }
+
+  .benefits-carousel {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) 52px;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .benefits-stack {
+    position: relative;
+    min-height: 430px;
+    overflow: visible;
+  }
+
+  .benefits-arrow {
+    position: relative;
+    z-index: 10;
+    display: inline-flex;
+    width: 52px;
+    height: 52px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgb(29 78 216 / 0.16);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.92);
+    box-shadow: 0 18px 36px rgb(15 23 42 / 0.12);
+    color: #123a9e;
+    cursor: pointer;
+    transition:
+      transform 180ms ease,
+      background-color 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .benefits-arrow:hover {
+    transform: translateY(-2px);
+    background: #fff;
+    box-shadow: 0 22px 46px rgb(15 23 42 / 0.16);
+  }
+
+  .benefit-slide {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    display: flex;
+    width: min(100%, 1080px);
+    height: 380px;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    border: 0;
+    border-radius: 10px;
+    padding: clamp(28px, 3vw, 46px) clamp(38px, 5vw, 72px);
+    box-shadow: 10px 0 16px rgb(15 23 42 / 0.24);
+    color: #fff;
+    cursor: pointer;
+    text-align: left;
+    transition:
+      transform 620ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 620ms ease,
+      box-shadow 220ms ease;
+    will-change: transform, opacity;
+  }
+
+  .benefit-slide:hover {
+    box-shadow: 12px 0 24px rgb(15 23 42 / 0.3);
+  }
+
+  .benefit-slide--red {
+    background: linear-gradient(135deg, #b80008 0%, #d0000b 100%);
+  }
+
+  .benefit-slide--blue {
+    background: linear-gradient(135deg, #155dfc 0%, #123a9e 100%);
+  }
+
+  .benefit-slide[data-slot='0'] {
+    z-index: 5;
+    transform: translate3d(0, -50%, 0);
+    opacity: 1;
+  }
+
+  .benefit-slide[data-slot='1'] {
+    z-index: 4;
+    transform: translate3d(98px, -50%, 0);
+    opacity: 0.98;
+  }
+
+  .benefit-slide[data-slot='2'] {
+    z-index: 3;
+    transform: translate3d(178px, -50%, 0);
+    opacity: 0.94;
+  }
+
+  .benefit-slide[data-slot='3'] {
+    z-index: 2;
+    transform: translate3d(242px, -50%, 0);
+    opacity: 0.9;
+  }
+
+  .benefit-slide[data-slot='4'] {
+    z-index: 1;
+    transform: translate3d(294px, -50%, 0);
+    opacity: 0.86;
+  }
+
+  .benefit-slide__number {
+    position: absolute;
+    top: 24px;
+    right: 32px;
+    color: rgb(255 255 255 / 0.55);
+    font-size: clamp(54px, 5vw, 82px);
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .benefit-slide__eyebrow {
+    display: block;
+    margin: 0 0 14px;
+    max-width: 780px;
+    color: rgb(255 255 255 / 0.84);
+    font-size: clamp(26px, 2.7vw, 42px);
+    font-weight: 800;
+    line-height: 1.1;
+  }
+
+  .benefit-slide__title {
+    display: block;
+    margin: 0;
+    max-width: 900px;
+    color: #fff;
+    font-size: clamp(40px, 4.8vw, 70px);
+    font-weight: 800;
+    line-height: 1.05;
+  }
+
+  .benefit-slide:not([data-slot='0']) .benefit-slide__eyebrow {
+    opacity: 0;
+  }
+
+  .benefit-slide:not([data-slot='0']) .benefit-slide__title {
+    opacity: 0;
+  }
+
+  .benefit-slide:not([data-slot='0']) .benefit-slide__number {
+    right: 22px;
+    font-size: clamp(42px, 3.8vw, 58px);
+  }
+
+  @media (max-width: 1023px) {
+    .benefits-slider {
+      padding-block: 56px;
+    }
+
+    .benefits-carousel {
+      position: relative;
+      display: block;
+    }
+
+    .benefits-arrow {
+      position: absolute;
+      top: 50%;
+      width: 44px;
+      height: 44px;
+      transform: translateY(-50%);
+    }
+
+    .benefits-arrow:hover {
+      transform: translateY(calc(-50% - 2px));
+    }
+
+    .benefits-arrow--prev {
+      left: -18px;
+    }
+
+    .benefits-arrow--next {
+      right: -18px;
+    }
+
+    .benefits-stack {
+      min-height: 340px;
+    }
+
+    .benefit-slide {
+      height: 310px;
+      width: 100%;
+      padding: clamp(22px, 7vw, 34px);
+      padding-left: clamp(54px, 15vw, 64px);
+    }
+
+    .benefit-slide[data-slot='0'],
+    .benefit-slide[data-slot='1'],
+    .benefit-slide[data-slot='2'],
+    .benefit-slide[data-slot='3'],
+    .benefit-slide[data-slot='4'] {
+      position: absolute;
+      width: 100%;
+    }
+
+    .benefit-slide[data-slot='0'] {
+      z-index: 5;
+      transform: translate3d(0, -50%, 0);
+      opacity: 1;
+    }
+
+    .benefit-slide[data-slot='1'] {
+      z-index: 4;
+      transform: translate3d(10px, -50%, 0);
+      opacity: 0.72;
+    }
+
+    .benefit-slide[data-slot='2'] {
+      z-index: 3;
+      transform: translate3d(18px, -50%, 0);
+      opacity: 0.52;
+    }
+
+    .benefit-slide[data-slot='3'] {
+      z-index: 2;
+      transform: translate3d(24px, -50%, 0);
+      opacity: 0.34;
+    }
+
+    .benefit-slide[data-slot='4'] {
+      z-index: 1;
+      transform: translate3d(30px, -50%, 0);
+      opacity: 0.2;
+    }
+
+    .benefit-slide__eyebrow,
+    .benefit-slide:not([data-slot='0']) .benefit-slide__eyebrow {
+      max-width: calc(100% - 74px);
+      font-size: clamp(24px, 7vw, 38px);
+    }
+
+    .benefit-slide__title,
+    .benefit-slide:not([data-slot='0']) .benefit-slide__title {
+      max-width: calc(100% - 32px);
+      font-size: clamp(32px, 9vw, 54px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .benefit-slide {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const carousel = document.querySelector<HTMLElement>(
+    '[data-benefits-carousel]',
+  );
+
+  if (carousel) {
+    const slides = Array.from(
+      carousel.querySelectorAll<HTMLButtonElement>('[data-benefit-slide]'),
+    );
+    const prev = carousel.querySelector<HTMLButtonElement>('[data-benefits-prev]');
+    const next = carousel.querySelector<HTMLButtonElement>('[data-benefits-next]');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const intervalMs = 10000;
+    let activeIndex = 0;
+    let timer: number | undefined;
+
+    const normalize = (index: number) =>
+      (index + slides.length) % slides.length;
+
+    const render = () => {
+      slides.forEach((slide, index) => {
+        const slot = normalize(index - activeIndex);
+        slide.dataset.slot = String(slot);
+        slide.setAttribute('aria-current', slot === 0 ? 'true' : 'false');
+      });
+    };
+
+    const stopAuto = () => {
+      if (timer) window.clearInterval(timer);
+      timer = undefined;
+    };
+
+    const startAuto = () => {
+      stopAuto();
+      if (reduceMotion.matches) return;
+      timer = window.setInterval(() => {
+        activeIndex = normalize(activeIndex + 1);
+        render();
+      }, intervalMs);
+    };
+
+    const goTo = (index: number) => {
+      activeIndex = normalize(index);
+      render();
+      startAuto();
+    };
+
+    slides.forEach((slide, index) => {
+      slide.addEventListener('click', () => goTo(index));
+    });
+
+    prev?.addEventListener('click', () => goTo(activeIndex - 1));
+    next?.addEventListener('click', () => goTo(activeIndex + 1));
+
+    carousel.addEventListener('mouseenter', stopAuto);
+    carousel.addEventListener('mouseleave', startAuto);
+    carousel.addEventListener('focusin', stopAuto);
+    carousel.addEventListener('focusout', startAuto);
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopAuto();
+      } else {
+        startAuto();
+      }
+    });
+
+    render();
+    startAuto();
+  }
+</script>
