@@ -39,7 +39,10 @@ import Footer from '../components/Footer.astro';
     let animationFrame: number | undefined;
     let unlockTimer: number | undefined;
     let isSectionJumping = false;
+    let wheelCooldownUntil = 0;
+    let isTouchScrollIgnored = false;
     let touchStartY: number | undefined;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     const refreshSections = () => {
       sections = Array.from(
@@ -50,13 +53,32 @@ import Footer from '../components/Footer.astro';
     const getHeaderOffset = () =>
       document.querySelector('header')?.getBoundingClientRect().height ?? 0;
 
-    const getSectionTop = (section: HTMLElement) =>
-      Math.max(
+    const clampScrollTop = (targetTop: number) => {
+      const maxScrollTop = Math.max(
         0,
-        section.getBoundingClientRect().top + window.scrollY - getHeaderOffset(),
+        document.documentElement.scrollHeight - window.innerHeight,
       );
 
-    const shouldIgnoreTarget = (target: EventTarget | null) => {
+      return Math.min(Math.max(targetTop, 0), maxScrollTop);
+    };
+
+    const getSectionScrollTarget = (section: HTMLElement) => {
+      const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+      const visibleCenter = (getHeaderOffset() + window.innerHeight) / 2;
+
+      return clampScrollTop(
+        sectionTop + section.offsetHeight / 2 - visibleCenter,
+      );
+    };
+
+    const shouldIgnoreScrollTarget = (target: EventTarget | null) => {
+      if (!(target instanceof HTMLElement)) return false;
+      return Boolean(
+        target.closest('input, textarea, select, [contenteditable]'),
+      );
+    };
+
+    const shouldIgnoreKeyboardTarget = (target: EventTarget | null) => {
       if (!(target instanceof HTMLElement)) return false;
       return Boolean(
         target.closest('input, textarea, select, button, [contenteditable]'),
@@ -64,21 +86,15 @@ import Footer from '../components/Footer.astro';
     };
 
     const getCurrentSectionIndex = () => {
-      const anchorY = window.scrollY + getHeaderOffset() + 4;
+      const anchorY =
+        window.scrollY + (getHeaderOffset() + window.innerHeight) / 2;
       let closestIndex = 0;
       let closestDistance = Number.POSITIVE_INFINITY;
 
       sections.forEach((section, index) => {
         const top = section.getBoundingClientRect().top + window.scrollY;
-        const bottom = top + section.offsetHeight;
-
-        if (anchorY >= top && anchorY < bottom) {
-          closestIndex = index;
-          closestDistance = 0;
-          return;
-        }
-
-        const distance = Math.abs(anchorY - top);
+        const sectionCenter = top + section.offsetHeight / 2;
+        const distance = Math.abs(anchorY - sectionCenter);
         if (distance < closestDistance) {
           closestIndex = index;
           closestDistance = distance;
@@ -89,21 +105,9 @@ import Footer from '../components/Footer.astro';
     };
 
     const canSnapFromSection = (index: number, direction: 1 | -1) => {
-      const section = sections[index];
-      if (!section) return false;
       if (direction > 0 && index >= sections.length - 1) return false;
       if (direction < 0 && index <= 0) return false;
-
-      const rect = section.getBoundingClientRect();
-      const headerOffset = getHeaderOffset();
-      const viewportHeight = window.innerHeight;
-      const boundary = 96;
-
-      if (direction > 0) {
-        return rect.bottom <= viewportHeight + boundary;
-      }
-
-      return rect.top >= headerOffset - boundary;
+      return Boolean(sections[index]);
     };
 
     const finishJump = () => {
@@ -112,6 +116,7 @@ import Footer from '../components/Footer.astro';
       animationFrame = undefined;
       unlockTimer = undefined;
       isSectionJumping = false;
+      wheelCooldownUntil = performance.now() + 120;
       document.documentElement.classList.remove('is-instant-page-jump');
     };
 
@@ -129,7 +134,13 @@ import Footer from '../components/Footer.astro';
       isSectionJumping = true;
       document.documentElement.classList.add('is-instant-page-jump');
 
-      const duration = Math.min(520, Math.max(320, Math.abs(distance) * 0.3));
+      if (reduceMotion.matches) {
+        window.scrollTo(0, targetTop);
+        finishJump();
+        return;
+      }
+
+      const duration = Math.min(420, Math.max(260, Math.abs(distance) * 0.2));
       const startedAt = performance.now();
       const easeOutCubic = (progress: number) =>
         1 - Math.pow(1 - progress, 3);
@@ -158,16 +169,26 @@ import Footer from '../components/Footer.astro';
       const nextSection = sections[currentIndex + direction];
       if (!nextSection) return false;
 
-      animateTo(getSectionTop(nextSection));
+      animateTo(getSectionScrollTarget(nextSection));
       return true;
+    };
+
+    const getSectionFromAnchorTarget = (target: HTMLElement) => {
+      const section = target.matches('section[id]')
+        ? target
+        : target.closest<HTMLElement>('section[id]');
+
+      if (!section || section.parentElement !== main) return undefined;
+      return section;
     };
 
     window.addEventListener(
       'wheel',
       (event) => {
+        if (shouldIgnoreScrollTarget(event.target)) return;
         if (Math.abs(event.deltaY) < 10) return;
 
-        if (isSectionJumping) {
+        if (isSectionJumping || performance.now() < wheelCooldownUntil) {
           event.preventDefault();
           return;
         }
@@ -183,6 +204,12 @@ import Footer from '../components/Footer.astro';
     window.addEventListener(
       'touchstart',
       (event) => {
+        isTouchScrollIgnored = shouldIgnoreScrollTarget(event.target);
+        if (isTouchScrollIgnored) {
+          touchStartY = undefined;
+          return;
+        }
+
         touchStartY = event.touches[0]?.clientY;
       },
       { passive: true },
@@ -191,6 +218,7 @@ import Footer from '../components/Footer.astro';
     window.addEventListener(
       'touchmove',
       (event) => {
+        if (isTouchScrollIgnored) return;
         if (touchStartY === undefined) return;
 
         const currentY = event.touches[0]?.clientY;
@@ -215,6 +243,34 @@ import Footer from '../components/Footer.astro';
 
     window.addEventListener('touchend', () => {
       touchStartY = undefined;
+      isTouchScrollIgnored = false;
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!(event.target instanceof Element)) return;
+
+      const link = event.target.closest<HTMLAnchorElement>('a[href^="#"]');
+      const hash = link?.hash;
+      if (!hash) return;
+
+      let anchorTarget: HTMLElement | null = null;
+      try {
+        anchorTarget = document.getElementById(
+          decodeURIComponent(hash.slice(1)),
+        );
+      } catch {
+        return;
+      }
+
+      if (!anchorTarget) return;
+      refreshSections();
+
+      const section = getSectionFromAnchorTarget(anchorTarget);
+      if (!section || !sections.includes(section)) return;
+
+      event.preventDefault();
+      history.pushState(null, '', hash);
+      animateTo(getSectionScrollTarget(section));
     });
 
     document.addEventListener('keydown', (event) => {
@@ -232,7 +288,7 @@ import Footer from '../components/Footer.astro';
         event.altKey ||
         event.ctrlKey ||
         event.metaKey ||
-        shouldIgnoreTarget(event.target)
+        shouldIgnoreKeyboardTarget(event.target)
       ) {
         return;
       }

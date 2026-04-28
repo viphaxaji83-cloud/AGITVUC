@@ -707,11 +707,12 @@ const slides = [
     const prev = carousel.querySelector<HTMLButtonElement>('[data-benefits-prev]');
     const next = carousel.querySelector<HTMLButtonElement>('[data-benefits-next]');
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const intervalMs = 3500;
+    const intervalMs = 10000;
     let activeIndex = 0;
     let didSwipe = false;
     let pointerStartX: number | undefined;
     let timer: number | undefined;
+    let scrollResumeTimer: number | undefined;
     let transitionCleanup: number | undefined;
 
     const clamp = (index: number) =>
@@ -772,6 +773,15 @@ const slides = [
       timer = window.setInterval(() => {
         goTo(normalize(activeIndex + 1), 'next');
       }, intervalMs);
+    };
+
+    const pauseAutoBriefly = () => {
+      stopAuto();
+      if (scrollResumeTimer) window.clearTimeout(scrollResumeTimer);
+      scrollResumeTimer = window.setTimeout(() => {
+        scrollResumeTimer = undefined;
+        startAuto();
+      }, 1200);
     };
 
     const goTo = (index: number, directionHint?: 'next' | 'prev') => {
@@ -844,6 +854,8 @@ const slides = [
     carousel.addEventListener('mouseleave', startAuto);
     carousel.addEventListener('focusin', stopAuto);
     carousel.addEventListener('focusout', startAuto);
+    window.addEventListener('wheel', pauseAutoBriefly, { passive: true });
+    window.addEventListener('touchmove', pauseAutoBriefly, { passive: true });
 
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
