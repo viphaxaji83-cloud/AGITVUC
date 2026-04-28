@@ -26,3 +26,227 @@ import Footer from '../components/Footer.astro';
   </main>
   <Footer />
 </BaseLayout>
+
+<script>
+  (() => {
+    const main = document.getElementById('main');
+    if (!main) return;
+
+    const sectionSelector = ':scope > section[id]';
+    let sections = Array.from(
+      main.querySelectorAll<HTMLElement>(sectionSelector),
+    );
+    let animationFrame: number | undefined;
+    let unlockTimer: number | undefined;
+    let isSectionJumping = false;
+    let touchStartY: number | undefined;
+
+    const refreshSections = () => {
+      sections = Array.from(
+        main.querySelectorAll<HTMLElement>(sectionSelector),
+      );
+    };
+
+    const getHeaderOffset = () =>
+      document.querySelector('header')?.getBoundingClientRect().height ?? 0;
+
+    const getSectionTop = (section: HTMLElement) =>
+      Math.max(
+        0,
+        section.getBoundingClientRect().top + window.scrollY - getHeaderOffset(),
+      );
+
+    const shouldIgnoreTarget = (target: EventTarget | null) => {
+      if (!(target instanceof HTMLElement)) return false;
+      return Boolean(
+        target.closest('input, textarea, select, button, [contenteditable]'),
+      );
+    };
+
+    const getCurrentSectionIndex = () => {
+      const anchorY = window.scrollY + getHeaderOffset() + 4;
+      let closestIndex = 0;
+      let closestDistance = Number.POSITIVE_INFINITY;
+
+      sections.forEach((section, index) => {
+        const top = section.getBoundingClientRect().top + window.scrollY;
+        const bottom = top + section.offsetHeight;
+
+        if (anchorY >= top && anchorY < bottom) {
+          closestIndex = index;
+          closestDistance = 0;
+          return;
+        }
+
+        const distance = Math.abs(anchorY - top);
+        if (distance < closestDistance) {
+          closestIndex = index;
+          closestDistance = distance;
+        }
+      });
+
+      return closestIndex;
+    };
+
+    const canSnapFromSection = (index: number, direction: 1 | -1) => {
+      const section = sections[index];
+      if (!section) return false;
+      if (direction > 0 && index >= sections.length - 1) return false;
+      if (direction < 0 && index <= 0) return false;
+
+      const rect = section.getBoundingClientRect();
+      const headerOffset = getHeaderOffset();
+      const viewportHeight = window.innerHeight;
+      const boundary = 96;
+
+      if (direction > 0) {
+        return rect.bottom <= viewportHeight + boundary;
+      }
+
+      return rect.top >= headerOffset - boundary;
+    };
+
+    const finishJump = () => {
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+      if (unlockTimer) window.clearTimeout(unlockTimer);
+      animationFrame = undefined;
+      unlockTimer = undefined;
+      isSectionJumping = false;
+      document.documentElement.classList.remove('is-instant-page-jump');
+    };
+
+    const animateTo = (targetTop: number) => {
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+      if (unlockTimer) window.clearTimeout(unlockTimer);
+
+      const startY = window.scrollY;
+      const distance = targetTop - startY;
+      if (Math.abs(distance) < 4) {
+        finishJump();
+        return;
+      }
+
+      isSectionJumping = true;
+      document.documentElement.classList.add('is-instant-page-jump');
+
+      const duration = Math.min(520, Math.max(320, Math.abs(distance) * 0.3));
+      const startedAt = performance.now();
+      const easeOutCubic = (progress: number) =>
+        1 - Math.pow(1 - progress, 3);
+
+      const step = (now: number) => {
+        const progress = Math.min((now - startedAt) / duration, 1);
+        window.scrollTo(0, startY + distance * easeOutCubic(progress));
+
+        if (progress < 1) {
+          animationFrame = window.requestAnimationFrame(step);
+          return;
+        }
+
+        finishJump();
+      };
+
+      animationFrame = window.requestAnimationFrame(step);
+      unlockTimer = window.setTimeout(finishJump, duration + 140);
+    };
+
+    const jumpByDirection = (direction: 1 | -1) => {
+      refreshSections();
+      const currentIndex = getCurrentSectionIndex();
+      if (!canSnapFromSection(currentIndex, direction)) return false;
+
+      const nextSection = sections[currentIndex + direction];
+      if (!nextSection) return false;
+
+      animateTo(getSectionTop(nextSection));
+      return true;
+    };
+
+    window.addEventListener(
+      'wheel',
+      (event) => {
+        if (Math.abs(event.deltaY) < 10) return;
+
+        if (isSectionJumping) {
+          event.preventDefault();
+          return;
+        }
+
+        const direction = event.deltaY > 0 ? 1 : -1;
+        if (jumpByDirection(direction)) {
+          event.preventDefault();
+        }
+      },
+      { passive: false },
+    );
+
+    window.addEventListener(
+      'touchstart',
+      (event) => {
+        touchStartY = event.touches[0]?.clientY;
+      },
+      { passive: true },
+    );
+
+    window.addEventListener(
+      'touchmove',
+      (event) => {
+        if (touchStartY === undefined) return;
+
+        const currentY = event.touches[0]?.clientY;
+        if (currentY === undefined) return;
+
+        const deltaY = touchStartY - currentY;
+        if (Math.abs(deltaY) < 46) return;
+
+        if (isSectionJumping) {
+          event.preventDefault();
+          return;
+        }
+
+        const direction = deltaY > 0 ? 1 : -1;
+        if (jumpByDirection(direction)) {
+          event.preventDefault();
+          touchStartY = undefined;
+        }
+      },
+      { passive: false },
+    );
+
+    window.addEventListener('touchend', () => {
+      touchStartY = undefined;
+    });
+
+    document.addEventListener('keydown', (event) => {
+      const isForwardScrollKey =
+        event.code === 'ArrowDown' ||
+        event.code === 'PageDown' ||
+        (event.code === 'Space' && !event.shiftKey);
+
+      const isBackwardScrollKey =
+        event.code === 'ArrowUp' ||
+        event.code === 'PageUp' ||
+        (event.code === 'Space' && event.shiftKey);
+
+      if (
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        shouldIgnoreTarget(event.target)
+      ) {
+        return;
+      }
+
+      if (isForwardScrollKey && jumpByDirection(1)) {
+        event.preventDefault();
+        return;
+      }
+
+      if (isBackwardScrollKey && jumpByDirection(-1)) {
+        event.preventDefault();
+      }
+    });
+
+    window.addEventListener('resize', refreshSections);
+  })();
+</script>

@@ -92,10 +92,13 @@ const slides = [
           профессиональные возможности, в том числе для молодежи с техническим
           образованием.
         </p>
-        <p class="benefits-statement__text benefits-statement__text--separate">
+        <a
+          href="#contacts"
+          class="benefits-statement__text benefits-statement__text--separate"
+        >
           Если ты интересуешься современными технологиями и готов служить
           Родине, в Адыгее продолжается набор в войска беспилотных систем.
-        </p>
+        </a>
       </div>
     </div>
   </Container>
@@ -108,8 +111,60 @@ const slides = [
     min-height: calc(100svh - 4rem);
     align-items: center;
     overflow: hidden;
-    background: #fff;
+    background: #fbfcff;
     padding-block: clamp(50px, 5.6vw, 92px);
+  }
+
+  .benefits-slider::before,
+  .benefits-slider::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+    pointer-events: none;
+  }
+
+  .benefits-slider::before {
+    background:
+      linear-gradient(90deg, rgb(15 23 42 / 0.075) 1px, transparent 1px)
+        50% 0 / 96px 96px,
+      linear-gradient(0deg, rgb(15 23 42 / 0.075) 1px, transparent 1px)
+        50% 0 / 96px 96px,
+      repeating-linear-gradient(
+        132deg,
+        transparent 0 138px,
+        rgb(29 78 216 / 0.105) 139px 140px,
+        transparent 141px 280px
+      );
+    mask-image: linear-gradient(
+      180deg,
+      transparent 0%,
+      #000 14%,
+      #000 86%,
+      transparent 100%
+    );
+    opacity: 0.92;
+  }
+
+  .benefits-slider::after {
+    inset: clamp(34px, 5vw, 84px) clamp(20px, 5vw, 92px);
+    background:
+      linear-gradient(rgb(15 23 42 / 0.14), rgb(15 23 42 / 0.14)) left top /
+        148px 1px no-repeat,
+      linear-gradient(rgb(15 23 42 / 0.18), rgb(15 23 42 / 0.18)) left top /
+        1px 148px no-repeat,
+      linear-gradient(rgb(15 23 42 / 0.16), rgb(15 23 42 / 0.16)) right top /
+        148px 1px no-repeat,
+      linear-gradient(rgb(15 23 42 / 0.16), rgb(15 23 42 / 0.16)) right top /
+        1px 148px no-repeat,
+      linear-gradient(rgb(15 23 42 / 0.16), rgb(15 23 42 / 0.16)) left bottom /
+        148px 1px no-repeat,
+      linear-gradient(rgb(15 23 42 / 0.16), rgb(15 23 42 / 0.16)) left bottom /
+        1px 148px no-repeat,
+      linear-gradient(rgb(15 23 42 / 0.18), rgb(15 23 42 / 0.18)) right bottom /
+        148px 1px no-repeat,
+      linear-gradient(rgb(15 23 42 / 0.18), rgb(15 23 42 / 0.18)) right bottom /
+        1px 148px no-repeat;
+    opacity: 0.82;
   }
 
   .benefits-slider.anchor-offset,
@@ -127,6 +182,8 @@ const slides = [
   }
 
   .benefits-layout {
+    position: relative;
+    z-index: 1;
     display: flex;
     width: 100%;
     flex-direction: column;
@@ -384,7 +441,7 @@ const slides = [
 
   .benefits-statement__text {
     margin: 0;
-    color: #111827;
+    color: #004329;
     font-size: clamp(1.24rem, 1.42vw, 2.1rem);
     font-weight: 500;
     letter-spacing: 0;
@@ -392,11 +449,13 @@ const slides = [
     text-align: justify;
     text-align-last: center;
     text-wrap: wrap;
+    word-spacing: -0.08em;
     overflow-wrap: normal;
     hyphens: manual;
   }
 
   .benefits-statement__text--separate {
+    display: block;
     width: min(100%, 1120px);
     margin: clamp(18px, 2.2vw, 34px) auto 0;
     border: 1px solid rgb(15 23 42 / 0.16);
@@ -409,6 +468,21 @@ const slides = [
     box-shadow: 0 16px 36px rgb(15 23 42 / 0.035);
     text-align: center;
     text-align-last: center;
+    text-decoration: none;
+    transition:
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms ease;
+  }
+
+  .benefits-statement__text--separate:hover {
+    border-color: rgb(184 0 8 / 0.32);
+    box-shadow: 0 20px 44px rgb(15 23 42 / 0.075);
+    transform: translateY(-2px);
+  }
+
+  .benefits-statement__text--separate:active {
+    transform: translateY(0);
   }
 
   @media (max-width: 1023px) {
