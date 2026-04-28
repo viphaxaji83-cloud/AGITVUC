@@ -30,68 +30,110 @@ const slides = [
 ];
 ---
 
-<section
-  id="benefits"
-  class="benefits-slider anchor-offset"
-  data-benefits-carousel
->
-  <button
-    type="button"
-    class="benefits-nav benefits-nav--prev"
-    aria-label="Предыдущая карточка"
-    data-benefits-prev
-  >
-  </button>
+<section id="benefits" class="benefits-slider anchor-offset">
+  <span id="directions" class="benefits-anchor anchor-offset" aria-hidden="true"></span>
+  <Container class="!max-w-[1760px]">
+    <div class="benefits-layout">
+      <div class="benefits-carousel-shell" data-benefits-carousel>
+        <button
+          type="button"
+          class="benefits-nav benefits-nav--prev"
+          aria-label="Предыдущая карточка"
+          data-benefits-prev
+        >
+        </button>
 
-  <Container class="!max-w-[1280px]">
-    <div
-      class="benefits-carousel"
-      aria-label="Ключевые условия и преимущества"
-    >
-      <div class="benefits-stack" aria-live="polite">
-        {
-          slides.map((slide, index) => (
-            <button
-              type="button"
-              class:list={[
-                'benefit-slide',
-                slide.tone === 'blue'
-                  ? 'benefit-slide--blue'
-                  : 'benefit-slide--red',
-              ]}
-              data-benefit-slide
-              data-slide-index={index}
-              data-position={index === 0 ? 'active' : `after-${index}`}
-              aria-current={index === 0 ? 'true' : 'false'}
-              aria-label={`Показать карточку: ${slide.eyebrow}`}
-            >
-              <span class="benefit-slide__number" aria-hidden="true">
-                {index + 1}
-              </span>
-              <span class="benefit-slide__eyebrow">{slide.eyebrow}</span>
-              <span class="benefit-slide__title">{slide.title}</span>
-            </button>
-          ))
-        }
+        <div
+          class="benefits-carousel"
+          aria-label="Ключевые условия и преимущества"
+        >
+          <div class="benefits-stack" aria-live="polite">
+            {
+              slides.map((slide, index) => (
+                <button
+                  type="button"
+                  class:list={[
+                    'benefit-slide',
+                    slide.tone === 'blue'
+                      ? 'benefit-slide--blue'
+                      : 'benefit-slide--red',
+                  ]}
+                  data-benefit-slide
+                  data-slide-index={index}
+                  data-position={index === 0 ? 'active' : `after-${index}`}
+                  aria-current={index === 0 ? 'true' : 'false'}
+                  aria-label={`Показать карточку: ${slide.eyebrow}`}
+                >
+                  <span class="benefit-slide__number" aria-hidden="true">
+                    {index + 1}
+                  </span>
+                  <span class="benefit-slide__eyebrow">{slide.eyebrow}</span>
+                  <span class="benefit-slide__title">{slide.title}</span>
+                </button>
+              ))
+            }
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="benefits-nav benefits-nav--next"
+          aria-label="Следующая карточка"
+          data-benefits-next
+        >
+        </button>
+      </div>
+
+      <div class="benefits-statement">
+        <p class="benefits-statement__text">
+          Сегодня в России формируется новый род войск — подразделения
+          беспилотных авиационных систем. Это направление уже сейчас играет
+          ключевую роль в обеспечении безопасности страны и открывает новые
+          профессиональные возможности, в том числе для молодежи с техническим
+          образованием.
+        </p>
       </div>
     </div>
   </Container>
-
-  <button
-    type="button"
-    class="benefits-nav benefits-nav--next"
-    aria-label="Следующая карточка"
-    data-benefits-next
-  >
-  </button>
 </section>
 
 <style>
   .benefits-slider {
     position: relative;
+    display: grid;
+    min-height: calc(100svh - 4rem);
+    align-items: center;
     overflow: hidden;
     background: #fff;
-    padding-block: clamp(76px, 7vw, 120px);
+    padding-block: clamp(50px, 5.6vw, 92px);
+  }
+
+  .benefits-slider.anchor-offset,
+  .benefits-anchor.anchor-offset {
+    scroll-margin-top: 4rem;
+  }
+
+  .benefits-anchor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+  }
+
+  .benefits-layout {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(38px, 5vw, 72px);
+  }
+
+  .benefits-carousel-shell {
+    position: relative;
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
   }
 
   .benefits-nav {
@@ -231,12 +273,13 @@ const slides = [
     transform: translate3d(-50%, 0, 0) scale(1);
   }
 
-  .benefits-carousel.is-transitioning .benefit-slide {
+  .benefits-carousel-shell.is-transitioning .benefit-slide {
     transition-duration: 760ms;
     transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .benefits-carousel.is-transitioning .benefit-slide[data-position='active'] {
+  .benefits-carousel-shell.is-transitioning
+    .benefit-slide[data-position='active'] {
     box-shadow:
       14px 0 24px rgb(15 23 42 / 0.28),
       0 20px 42px rgb(15 23 42 / 0.12);
@@ -329,9 +372,33 @@ const slides = [
     transform: translateZ(0);
   }
 
+  .benefits-statement {
+    width: min(100%, 1710px);
+    margin-inline: auto;
+    padding-inline: clamp(8px, 2vw, 36px);
+  }
+
+  .benefits-statement__text {
+    margin: 0;
+    color: #111827;
+    font-size: clamp(1.24rem, 1.42vw, 2.1rem);
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.32;
+    text-align: justify;
+    text-align-last: center;
+    text-wrap: wrap;
+    overflow-wrap: normal;
+    hyphens: manual;
+  }
+
   @media (max-width: 1023px) {
     .benefits-slider {
       padding-block: 56px;
+    }
+
+    .benefits-layout {
+      gap: 44px;
     }
 
     .benefits-nav {
@@ -411,9 +478,26 @@ const slides = [
       font-size: 2.75rem;
       line-height: 1.08;
     }
+
+    .benefits-statement__text {
+      font-size: clamp(1.24rem, 3.6vw, 2rem);
+      line-height: 1.2;
+      text-align: center;
+      text-align-last: center;
+      text-wrap: pretty;
+    }
   }
 
   @media (max-width: 767px) {
+    .benefits-slider {
+      min-height: calc(100svh - 4rem);
+      padding-block: 44px;
+    }
+
+    .benefits-layout {
+      gap: 36px;
+    }
+
     .benefits-nav {
       display: none;
     }
@@ -484,6 +568,11 @@ const slides = [
     .benefit-slide__title {
       font-size: 2.05rem;
     }
+
+    .benefits-statement__text {
+      font-size: clamp(1.13rem, 5.1vw, 1.52rem);
+      line-height: 1.24;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -507,7 +596,6 @@ const slides = [
       transform: translateX(120%) skewX(-10deg);
     }
   }
-
 </style>
 
 <script>
@@ -616,8 +704,12 @@ const slides = [
       });
     });
 
-    prev?.addEventListener('click', () => goTo(normalize(activeIndex - 1), 'prev'));
-    next?.addEventListener('click', () => goTo(normalize(activeIndex + 1), 'next'));
+    prev?.addEventListener('click', () =>
+      goTo(normalize(activeIndex - 1), 'prev'),
+    );
+    next?.addEventListener('click', () =>
+      goTo(normalize(activeIndex + 1), 'next'),
+    );
 
     carousel.addEventListener('pointerdown', (event) => {
       didSwipe = false;
