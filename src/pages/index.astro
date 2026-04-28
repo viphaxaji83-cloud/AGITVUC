@@ -38,6 +38,7 @@ import Footer from '../components/Footer.astro';
     );
     let animationFrame: number | undefined;
     let unlockTimer: number | undefined;
+    let motionCleanupTimer: number | undefined;
     let isSectionJumping = false;
     let wheelCooldownUntil = 0;
     let isTouchScrollIgnored = false;
@@ -110,6 +111,37 @@ import Footer from '../components/Footer.astro';
       return Boolean(sections[index]);
     };
 
+    const clearSectionMotion = () => {
+      if (motionCleanupTimer) window.clearTimeout(motionCleanupTimer);
+      motionCleanupTimer = undefined;
+
+      sections.forEach((section) => {
+        delete section.dataset.scrollMotion;
+        section.style.removeProperty('--scroll-motion-y');
+      });
+    };
+
+    const markSectionMotion = (
+      fromSection: HTMLElement | undefined,
+      toSection: HTMLElement | undefined,
+      direction: 1 | -1,
+    ) => {
+      if (reduceMotion.matches || !toSection || fromSection === toSection) {
+        return;
+      }
+
+      clearSectionMotion();
+
+      fromSection?.style.setProperty(
+        '--scroll-motion-y',
+        `${direction * -5}px`,
+      );
+      toSection.style.setProperty('--scroll-motion-y', `${direction * 8}px`);
+
+      if (fromSection) fromSection.dataset.scrollMotion = 'leaving';
+      toSection.dataset.scrollMotion = 'entering';
+    };
+
     const finishJump = () => {
       if (animationFrame) window.cancelAnimationFrame(animationFrame);
       if (unlockTimer) window.clearTimeout(unlockTimer);
@@ -118,9 +150,18 @@ import Footer from '../components/Footer.astro';
       isSectionJumping = false;
       wheelCooldownUntil = performance.now() + 120;
       document.documentElement.classList.remove('is-instant-page-jump');
+
+      motionCleanupTimer = window.setTimeout(clearSectionMotion, 220);
     };
 
-    const animateTo = (targetTop: number) => {
+    const animateTo = (
+      targetTop: number,
+      motion?: {
+        fromSection?: HTMLElement;
+        toSection?: HTMLElement;
+        direction: 1 | -1;
+      },
+    ) => {
       if (animationFrame) window.cancelAnimationFrame(animationFrame);
       if (unlockTimer) window.clearTimeout(unlockTimer);
 
@@ -133,6 +174,11 @@ import Footer from '../components/Footer.astro';
 
       isSectionJumping = true;
       document.documentElement.classList.add('is-instant-page-jump');
+      markSectionMotion(
+        motion?.fromSection,
+        motion?.toSection,
+        motion?.direction ?? (distance > 0 ? 1 : -1),
+      );
 
       if (reduceMotion.matches) {
         window.scrollTo(0, targetTop);
@@ -140,14 +186,14 @@ import Footer from '../components/Footer.astro';
         return;
       }
 
-      const duration = Math.min(420, Math.max(260, Math.abs(distance) * 0.2));
+      const duration = Math.min(620, Math.max(420, Math.abs(distance) * 0.32));
       const startedAt = performance.now();
-      const easeOutCubic = (progress: number) =>
-        1 - Math.pow(1 - progress, 3);
+      const easeInOutSine = (progress: number) =>
+        -(Math.cos(Math.PI * progress) - 1) / 2;
 
       const step = (now: number) => {
         const progress = Math.min((now - startedAt) / duration, 1);
-        window.scrollTo(0, startY + distance * easeOutCubic(progress));
+        window.scrollTo(0, startY + distance * easeInOutSine(progress));
 
         if (progress < 1) {
           animationFrame = window.requestAnimationFrame(step);
@@ -169,7 +215,11 @@ import Footer from '../components/Footer.astro';
       const nextSection = sections[currentIndex + direction];
       if (!nextSection) return false;
 
-      animateTo(getSectionScrollTarget(nextSection));
+      animateTo(getSectionScrollTarget(nextSection), {
+        fromSection: sections[currentIndex],
+        toSection: nextSection,
+        direction,
+      });
       return true;
     };
 
@@ -268,9 +318,16 @@ import Footer from '../components/Footer.astro';
       const section = getSectionFromAnchorTarget(anchorTarget);
       if (!section || !sections.includes(section)) return;
 
+      const targetTop = getSectionScrollTarget(section);
+      const direction = targetTop >= window.scrollY ? 1 : -1;
+
       event.preventDefault();
       history.pushState(null, '', hash);
-      animateTo(getSectionScrollTarget(section));
+      animateTo(targetTop, {
+        fromSection: sections[getCurrentSectionIndex()],
+        toSection: section,
+        direction,
+      });
     });
 
     document.addEventListener('keydown', (event) => {

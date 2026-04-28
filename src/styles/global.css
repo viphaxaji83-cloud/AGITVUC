@@ -134,6 +134,51 @@
     scroll-margin-top: 6rem;
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    #main > section[data-scroll-motion] {
+      backface-visibility: hidden;
+      transform-origin: center;
+      will-change: opacity, transform;
+    }
+
+    #main > section[data-scroll-motion='entering'] {
+      animation: section-soft-enter 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    #main > section[data-scroll-motion='leaving'] {
+      animation: section-soft-leave 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      pointer-events: none;
+    }
+  }
+
+  @keyframes section-soft-enter {
+    0% {
+      opacity: 0.94;
+      transform: translateY(var(--scroll-motion-y, 8px));
+    }
+
+    70% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes section-soft-leave {
+    0% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    100% {
+      opacity: 0.985;
+      transform: translateY(var(--scroll-motion-y, -5px));
+    }
+  }
+
   .gradient-hero {
     background:
       radial-gradient(
