@@ -95,8 +95,9 @@ import { site } from '../data/site';
 <script>
   const hero = document.getElementById('hero');
   const benefits = document.getElementById('benefits');
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let isPageJumping = false;
+  let jumpAnimationFrame: number | undefined;
+  let jumpUnlockTimer: number | undefined;
   let touchStartY: number | undefined;
 
   const getHeaderOffset = () =>
@@ -142,38 +143,55 @@ import { site } from '../data/site';
     );
   };
 
-  const jumpToHero = () => {
-    if (!hero || isPageJumping) return;
+  const finishPageJump = () => {
+    if (jumpAnimationFrame) window.cancelAnimationFrame(jumpAnimationFrame);
+    if (jumpUnlockTimer) window.clearTimeout(jumpUnlockTimer);
+    jumpAnimationFrame = undefined;
+    jumpUnlockTimer = undefined;
+    isPageJumping = false;
+    document.documentElement.classList.remove('is-instant-page-jump');
+  };
+
+  const jumpToPosition = (top: number) => {
+    if (jumpAnimationFrame) window.cancelAnimationFrame(jumpAnimationFrame);
+    if (jumpUnlockTimer) window.clearTimeout(jumpUnlockTimer);
 
     isPageJumping = true;
-    window.scrollTo({
-      top: getHeroTop(),
-      behavior: reduceMotion.matches ? 'auto' : 'smooth',
-    });
+    document.documentElement.classList.add('is-instant-page-jump');
 
-    window.setTimeout(
-      () => {
-        isPageJumping = false;
-      },
-      reduceMotion.matches ? 120 : 900,
-    );
+    const startY = window.scrollY;
+    const distance = top - startY;
+    const duration = Math.min(440, Math.max(280, Math.abs(distance) * 0.28));
+    const startedAt = performance.now();
+
+    const easeOutCubic = (progress: number) =>
+      1 - Math.pow(1 - progress, 3);
+
+    const step = (now: number) => {
+      const progress = Math.min((now - startedAt) / duration, 1);
+      const eased = easeOutCubic(progress);
+      window.scrollTo(0, startY + distance * eased);
+
+      if (progress < 1) {
+        jumpAnimationFrame = window.requestAnimationFrame(step);
+        return;
+      }
+
+      finishPageJump();
+    };
+
+    jumpAnimationFrame = window.requestAnimationFrame(step);
+    jumpUnlockTimer = window.setTimeout(finishPageJump, duration + 120);
+  };
+
+  const jumpToHero = () => {
+    if (!hero) return;
+    jumpToPosition(getHeroTop());
   };
 
   const jumpToBenefits = () => {
-    if (!benefits || isPageJumping) return;
-
-    isPageJumping = true;
-    window.scrollTo({
-      top: getBenefitsTop(),
-      behavior: reduceMotion.matches ? 'auto' : 'smooth',
-    });
-
-    window.setTimeout(
-      () => {
-        isPageJumping = false;
-      },
-      reduceMotion.matches ? 120 : 900,
-    );
+    if (!benefits) return;
+    jumpToPosition(getBenefitsTop());
   };
 
   const shouldIgnoreKeyTarget = (target: EventTarget | null) => {
@@ -184,6 +202,11 @@ import { site } from '../data/site';
   window.addEventListener(
     'wheel',
     (event) => {
+      if (isPageJumping) {
+        event.preventDefault();
+        return;
+      }
+
       if (event.deltaY > 16 && isInsideHeroScrollZone()) {
         event.preventDefault();
         jumpToBenefits();
