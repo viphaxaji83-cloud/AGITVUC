@@ -36,6 +36,7 @@ export default {
       },
       fontFamily: {
         sans: [
+          '"Gros Ventre"',
           '-apple-system',
           'BlinkMacSystemFont',
           '"Segoe UI"',

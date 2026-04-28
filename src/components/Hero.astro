@@ -1,7 +1,6 @@
 ---
 import Container from './ui/Container.astro';
 import Icon from './ui/Icon.astro';
-import { site } from '../data/site';
 ---
 
 <section
@@ -29,17 +28,8 @@ import { site } from '../data/site';
   <Container
     class="relative flex min-h-[calc(100svh-4rem)] !max-w-[1760px] flex-col justify-end py-10 sm:!px-8 sm:py-14 lg:min-h-[calc(100svh-4rem)] lg:!px-20 lg:py-16 xl:!px-24"
   >
-    <div class="flex max-w-[780px] flex-col gap-6 pb-3 sm:pb-8 lg:pb-10">
-      <div class="flex flex-col gap-5 animate-fade-up">
-        <span
-          class="inline-flex items-center gap-2 self-start rounded-full border border-white/25 bg-white/14 px-4 py-2 text-xs font-semibold uppercase text-white shadow-[0_14px_32px_rgba(0,0,0,0.24)] backdrop-blur-md"
-        >
-          <span
-            class="h-2 w-2 rounded-full bg-accent-red"
-            aria-hidden="true"></span>
-          Информационный раздел · {site.university}
-        </span>
-
+    <div class="flex max-w-[780px] flex-col gap-6 pb-12 sm:pb-16 lg:pb-24">
+      <div class="flex flex-col gap-8 animate-fade-up sm:gap-10">
         <h1
           class="max-w-[780px] text-[2.55rem] font-bold uppercase leading-[1.05] text-white drop-shadow-[0_6px_24px_rgba(0,0,0,0.45)] sm:text-6xl lg:text-[4rem] xl:text-[4.25rem]"
         >
@@ -51,26 +41,6 @@ import { site } from '../data/site';
           <span class="block sm:hidden">служба</span>
           <span class="block sm:hidden">для студентов</span>
         </h1>
-
-        <div
-          class="h-1.5 w-full max-w-[360px] rounded-full bg-[linear-gradient(90deg,#d62718_0%,#d62718_34%,#2563eb_34%,#2563eb_68%,#ffffff_68%,#ffffff_100%)] shadow-[0_4px_16px_rgba(0,0,0,0.35)]"
-          aria-hidden="true"
-        >
-        </div>
-
-        <p
-          class="max-w-[700px] rounded-[28px] border border-white/20 bg-white/22 px-5 py-4 text-sm font-semibold uppercase leading-relaxed text-white shadow-[0_16px_44px_rgba(0,0,0,0.28)] backdrop-blur-md sm:text-lg"
-        >
-          <span class="hidden sm:inline">
-            Разберитесь в направлениях, условиях и порядке официальной
-            консультации. Без давления, с&nbsp;опорой на документы и поддержку
-            университета.
-          </span>
-          <span class="sm:hidden">
-            Разберитесь в направлениях и условиях. Консультация без
-            обязательств.
-          </span>
-        </p>
 
         <div class="flex flex-col gap-3 sm:flex-row">
           <a
