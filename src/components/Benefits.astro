@@ -28,6 +28,29 @@ const slides = [
     tone: 'red',
   },
 ];
+
+const benefitSlides = [
+  {
+    eyebrow: 'За 1 год службы',
+    title: 'от 5 600 000 ₽',
+    tone: 'red',
+  },
+  {
+    eyebrow: 'Срок действия спецконтракта',
+    title: '1 год',
+    tone: 'blue',
+  },
+  {
+    eyebrow: 'Обучение по спецподготовке',
+    title: '2 месяца',
+    tone: 'red',
+  },
+  {
+    eyebrow: 'Возрастные требования',
+    title: '18-35 лет',
+    tone: 'blue',
+  },
+];
 ---
 
 <section id="benefits" class="benefits-slider anchor-offset">
@@ -49,7 +72,7 @@ const slides = [
         >
           <div class="benefits-stack" aria-live="polite">
             {
-              slides.map((slide, index) => (
+              benefitSlides.map((slide, index) => (
                 <button
                   type="button"
                   class:list={[
@@ -422,10 +445,10 @@ const slides = [
 
   .benefit-slide__title {
     display: block;
-    margin-top: 8px;
+    margin-top: 46px;
     max-width: 880px;
     color: #fff;
-    font-size: 3.5rem;
+    font-size: 4.45rem;
     font-weight: 800;
     line-height: 1.08;
     backface-visibility: hidden;
@@ -568,7 +591,8 @@ const slides = [
     }
 
     .benefit-slide__title {
-      font-size: 2.75rem;
+      margin-top: 38px;
+      font-size: 3.15rem;
       line-height: 1.08;
     }
 
@@ -606,7 +630,7 @@ const slides = [
     }
 
     .benefit-slide__title {
-      font-size: 3.1rem;
+      font-size: 3.55rem;
     }
   }
 
@@ -663,7 +687,8 @@ const slides = [
     }
 
     .benefit-slide__title {
-      font-size: 2.05rem;
+      margin-top: 32px;
+      font-size: 2.35rem;
     }
 
     .benefits-statement__text {

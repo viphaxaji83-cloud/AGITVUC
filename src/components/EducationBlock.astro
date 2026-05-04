@@ -1,43 +1,30 @@
 ---
 import Container from './ui/Container.astro';
-import Icon from './ui/Icon.astro';
 
 const advantages = [
   {
-    title: 'Технологии',
-    description:
-      'Знакомство с современными беспилотными системами, средствами управления и практическими сценариями применения.',
-    icon: 'drone',
+    title: 'Единовременная выплата',
+    description: 'до 3 000 000 ₽',
   },
   {
-    title: 'Обучение',
-    description:
-      'Понятная образовательная траектория: консультации, разбор направлений и помощь с выбором подходящего формата.',
-    icon: 'education',
+    title: 'Ежемесячные выплаты',
+    description: 'от 230 000 ₽',
   },
   {
-    title: 'Поддержка',
-    description:
-      'Университет помогает с документами, этапами оформления и ответами на организационные вопросы.',
-    icon: 'support',
+    title: 'Прохождение службы',
+    description: 'только в войсках БПС',
   },
   {
-    title: 'Практика',
-    description:
-      'Акцент на прикладные навыки: безопасность, связь, техническая подготовка и работа в команде.',
-    icon: 'engineering',
+    title: 'Сниженный риск',
+    description: '(2-3 линия БС)',
   },
   {
-    title: 'Выплаты',
-    description:
-      'Финансовые условия и доступные меры поддержки обсуждаются заранее на консультации.',
-    icon: 'finance',
+    title: 'Служба в войсках БПС',
+    description: 'засчитывается как служба по призыву',
   },
   {
-    title: 'Перспектива',
-    description:
-      'Опыт, который может стать стартом для инженерной, технической или управленческой траектории.',
-    icon: 'career',
+    title: '1 год службы в БПС',
+    description: 'засчитывается как 3 года гражданской службы',
   },
 ] as const;
 ---
@@ -52,9 +39,6 @@ const advantages = [
       {
         advantages.map((item) => (
           <article class="advantages-card">
-            <span class="advantages-card__icon" aria-hidden="true">
-              <Icon name={item.icon} size={22} />
-            </span>
             <h3>{item.title}</h3>
             <p>{item.description}</p>
           </article>
@@ -182,22 +166,9 @@ const advantages = [
     transform: translateY(-2px);
   }
 
-  .advantages-card__icon {
-    display: inline-flex;
-    width: 42px;
-    height: 42px;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 14px;
-    border: 1px solid rgb(15 23 42 / 0.18);
-    border-radius: 6px;
-    color: #004329;
-    background: rgb(255 255 255 / 0.62);
-  }
-
   .advantages-card h3 {
     margin: 0 0 8px;
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     font-weight: 700;
     line-height: 1.08;
     color: #004329;
@@ -205,7 +176,7 @@ const advantages = [
   }
 
   .advantages-card p {
-    margin: 0;
+    margin: 16px 0 0;
     max-width: 32rem;
     color: rgb(15 23 42 / 0.68);
     font-size: 0.98rem;
@@ -225,7 +196,7 @@ const advantages = [
     }
 
     .advantages-card h3 {
-      font-size: 1.45rem;
+      font-size: 1.28rem;
     }
 
     .advantages-card p {
