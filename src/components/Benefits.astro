@@ -131,11 +131,11 @@ const benefitSlides = [
   .benefits-slider {
     position: relative;
     display: grid;
-    min-height: calc(100svh - 4rem);
+    min-height: auto;
     align-items: center;
     overflow: hidden;
     background: #fbfcff;
-    padding-block: clamp(50px, 5.6vw, 92px);
+    padding-block: clamp(42px, 4.6vw, 72px);
   }
 
   .benefits-slider::before,
@@ -211,7 +211,7 @@ const benefitSlides = [
     width: 100%;
     flex-direction: column;
     justify-content: center;
-    gap: clamp(38px, 5vw, 72px);
+    gap: clamp(30px, 4vw, 52px);
   }
 
   .benefits-carousel-shell {
@@ -278,8 +278,8 @@ const benefitSlides = [
   .benefits-carousel {
     position: relative;
     margin-inline: auto;
-    height: 350px;
-    max-width: 1280px;
+    height: 300px;
+    max-width: 1160px;
     perspective: 1200px;
   }
 
@@ -297,14 +297,14 @@ const benefitSlides = [
     top: 0;
     left: 50%;
     display: flex;
-    width: min(92vw, 1180px);
-    height: 350px;
+    width: min(88vw, 1040px);
+    height: 300px;
     flex-direction: column;
     justify-content: flex-start;
     overflow: hidden;
     border: 0;
     border-radius: 10px;
-    padding: 66px 92px 34px 40px;
+    padding: 54px 80px 28px 36px;
     box-shadow: 10px 0 10px rgb(0 0 0 / 0.25);
     color: #fff;
     cursor: grab;
@@ -423,7 +423,7 @@ const benefitSlides = [
     top: 4px;
     right: 36px;
     color: rgb(255 255 255 / 0.55);
-    font-size: 4.85rem;
+    font-size: 4.1rem;
     font-weight: 800;
     line-height: 1.2;
     backface-visibility: hidden;
@@ -435,7 +435,7 @@ const benefitSlides = [
     margin: 0;
     max-width: 860px;
     color: rgb(255 255 255 / 0.8);
-    font-size: 2.75rem;
+    font-size: 2.3rem;
     font-weight: 800;
     line-height: 1.2;
     backface-visibility: hidden;
@@ -445,10 +445,10 @@ const benefitSlides = [
 
   .benefit-slide__title {
     display: block;
-    margin-top: 46px;
-    max-width: 880px;
+    margin-top: 34px;
+    max-width: 780px;
     color: #fff;
-    font-size: 4.45rem;
+    font-size: 3.7rem;
     font-weight: 800;
     line-height: 1.08;
     backface-visibility: hidden;
@@ -457,7 +457,7 @@ const benefitSlides = [
   }
 
   .benefits-statement {
-    width: min(100%, 1500px);
+    width: min(100%, 1320px);
     margin-inline: auto;
     padding-inline: 0;
   }
@@ -465,7 +465,7 @@ const benefitSlides = [
   .benefits-statement__text {
     margin: 0;
     color: #004329;
-    font-size: clamp(1.24rem, 1.42vw, 2.1rem);
+    font-size: clamp(1.12rem, 1.18vw, 1.7rem);
     font-weight: 500;
     letter-spacing: 0;
     line-height: 1.08;
@@ -479,12 +479,12 @@ const benefitSlides = [
 
   .benefits-statement__text--separate {
     display: block;
-    width: min(100%, 1120px);
-    margin: clamp(18px, 2.2vw, 34px) auto 0;
+    width: min(100%, 980px);
+    margin: clamp(16px, 1.8vw, 26px) auto 0;
     border: 1px solid rgb(15 23 42 / 0.16);
     border-radius: 20px;
     background: transparent;
-    padding: clamp(14px, 1.5vw, 22px) clamp(18px, 2.2vw, 36px);
+    padding: clamp(12px, 1.2vw, 18px) clamp(18px, 2vw, 30px);
     color: #b80008;
     font-weight: 600;
     line-height: 1.07;
@@ -538,13 +538,13 @@ const benefitSlides = [
     }
 
     .benefits-carousel {
-      height: 312px;
+      height: 286px;
     }
 
     .benefit-slide {
       width: calc(100vw - 32px);
-      height: 312px;
-      padding: 58px 56px 42px 24px;
+      height: 286px;
+      padding: 48px 50px 34px 24px;
     }
 
     .benefit-slide[data-position='before-1'] {
@@ -582,22 +582,22 @@ const benefitSlides = [
     .benefit-slide__number {
       top: 6px;
       right: 22px;
-      font-size: 3.4rem;
+      font-size: 3rem;
     }
 
     .benefit-slide__eyebrow {
-      font-size: 2rem;
+      font-size: 1.78rem;
       line-height: 1.12;
     }
 
     .benefit-slide__title {
-      margin-top: 38px;
-      font-size: 3.15rem;
+      margin-top: 30px;
+      font-size: 2.7rem;
       line-height: 1.08;
     }
 
     .benefits-statement__text {
-      font-size: clamp(1.24rem, 3.6vw, 2rem);
+      font-size: clamp(1.12rem, 3.2vw, 1.7rem);
       line-height: 1.05;
       text-align: center;
       text-align-last: center;
@@ -611,8 +611,8 @@ const benefitSlides = [
 
   @media (max-width: 767px) {
     .benefits-slider {
-      min-height: calc(100svh - 4rem);
-      padding-block: 44px;
+      min-height: auto;
+      padding-block: 40px;
     }
 
     .benefits-layout {
@@ -626,11 +626,11 @@ const benefitSlides = [
 
   @media (min-width: 1024px) and (max-width: 1279px) {
     .benefit-slide__eyebrow {
-      font-size: 2.25rem;
+      font-size: 1.95rem;
     }
 
     .benefit-slide__title {
-      font-size: 3.55rem;
+      font-size: 3rem;
     }
   }
 
@@ -675,24 +675,24 @@ const benefitSlides = [
   @media (max-width: 520px) {
     .benefits-carousel,
     .benefit-slide {
-      height: 286px;
+      height: 260px;
     }
 
     .benefit-slide {
-      padding: 52px 44px 34px 22px;
+      padding: 44px 38px 30px 20px;
     }
 
     .benefit-slide__eyebrow {
-      font-size: 1.5rem;
+      font-size: 1.32rem;
     }
 
     .benefit-slide__title {
-      margin-top: 32px;
-      font-size: 2.35rem;
+      margin-top: 26px;
+      font-size: 2rem;
     }
 
     .benefits-statement__text {
-      font-size: clamp(1.13rem, 5.1vw, 1.52rem);
+      font-size: clamp(1.04rem, 4.7vw, 1.36rem);
       line-height: 1.24;
     }
   }

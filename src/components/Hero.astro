@@ -5,7 +5,7 @@ import Icon from './ui/Icon.astro';
 
 <section
   id="hero"
-  class="relative isolate overflow-hidden bg-ink-950 text-white anchor-offset"
+  class="hero-section relative isolate overflow-hidden bg-ink-950 text-white anchor-offset"
 >
   <picture aria-hidden="true">
     <source srcset="/hero-bpla-training-v4.webp" type="image/webp" />
@@ -24,6 +24,7 @@ import Icon from './ui/Icon.astro';
     aria-hidden="true"
   >
   </div>
+  <div class="hero-section__fade" aria-hidden="true"></div>
 
   <Container
     class="relative flex min-h-[calc(100svh-4rem)] !max-w-[1760px] flex-col justify-end py-10 sm:!px-8 sm:py-14 lg:min-h-[calc(100svh-4rem)] lg:!px-20 lg:py-16 xl:!px-24"
@@ -61,3 +62,27 @@ import Icon from './ui/Icon.astro';
     </div>
   </Container>
 </section>
+
+<style>
+  .hero-section__fade {
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+    z-index: -5;
+    height: 0;
+    pointer-events: none;
+    background: none;
+  }
+
+  :global(html[data-theme='dark']) .hero-section__fade {
+    height: clamp(150px, 20vh, 260px);
+    background: linear-gradient(
+      180deg,
+      rgb(6 13 27 / 0) 0%,
+      rgb(6 13 27 / 0.16) 26%,
+      rgb(6 13 27 / 0.66) 68%,
+      #060d1b 100%
+    );
+  }
+</style>
