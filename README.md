@@ -1,10 +1,24 @@
-# Контрактная служба для студентов — лендинг
+# AGITVUC
 
-Информационный одностраничный лендинг университета: спокойный, технологичный, без давления и без неподтверждённых обещаний. Все ключевые сведения вынесены в data-файлы и подлежат проверке по официальным документам.
+Лендинг о контрактной службе для студентов. Проект собран на Astro и Tailwind CSS, генерируется как статический сайт и содержит светлую/темную тему с переключателем в шапке.
 
-Стек: **Astro + TypeScript + Tailwind CSS**, минимум клиентского JS, статическая генерация.
+## Что есть на странице
 
----
+- Hero-блок с фоновым изображением и CTA.
+- Блок с каруселью ключевых условий.
+- Блок «Преимущества» с компактными карточками.
+- Блок «Возможности для студентов».
+- Блок с этапами процесса.
+- FAQ.
+- Контактная форма.
+- Светлая и темная темы, выбор сохраняется в `localStorage`.
+
+## Стек
+
+- Astro 4
+- TypeScript
+- Tailwind CSS
+- Статическая сборка в `dist/`
 
 ## Быстрый старт
 
@@ -13,145 +27,94 @@ npm install
 npm run dev
 ```
 
-Затем откройте `http://localhost:4321/`.
+Локальный адрес по умолчанию:
 
-### Команды
+```text
+http://localhost:4321/
+```
 
-| Команда           | Что делает                                              |
-| ----------------- | ------------------------------------------------------- |
-| `npm install`     | Установить зависимости                                  |
-| `npm run dev`     | Локальный dev-сервер с hot reload                       |
-| `npm run build`   | Сборка статики в `./dist/`                              |
-| `npm run preview` | Предпросмотр продакшен-сборки                           |
+## Команды
 
----
+```bash
+npm run dev      # dev-сервер
+npm run build    # production-сборка в dist/
+npm run preview  # предпросмотр production-сборки
+```
 
 ## Структура проекта
 
-```
+```text
 src/
   components/
-    Header.astro          — шапка, навигация, мобильное меню (островной JS)
-    Hero.astro            — hero-блок с CTA
-    Benefits.astro        — карточки «почему интересно»
-    Directions.astro      — карточки направлений
-    EducationBlock.astro  — образовательные сценарии
-    FinanceBlock.astro    — финансовые условия
-    SupportBlock.astro    — социальная поддержка
-    ProcessSteps.astro    — пошаговая схема
-    FAQ.astro             — аккордеон на нативном <details>
-    ContactForm.astro     — форма заявки + островной JS отправки
-    Footer.astro          — подвал
-    DirectionPage.astro   — общий шаблон страницы направления
-    ui/
-      Button.astro
-      Card.astro
-      Container.astro
-      DisclaimerNote.astro
-      Icon.astro
-      SectionTitle.astro
+    Header.astro          # шапка, навигация, переключатель темы
+    Hero.astro            # первый экран
+    Benefits.astro        # карусель и текстовый блок
+    EducationBlock.astro  # блок «Преимущества»
+    FinanceBlock.astro    # блок «Возможности для студентов»
+    ProcessSteps.astro    # этапы процесса
+    FAQ.astro             # вопросы и ответы
+    ContactForm.astro     # форма заявки
+    Footer.astro          # футер
+    ui/                   # базовые UI-компоненты
   data/
-    site.ts               — название, навигация, общий disclaimer
-    benefits.ts           — карточки преимуществ
-    directions.ts         — направления (slug, описание, доступность)
-    faq.ts                — вопросы и аккуратные ответы
-    contacts.ts           — телефон, email, адрес, шаги процесса
-    finance.ts            — финансовые карточки (суммы → null = «уточняется»)
-    support.ts            — темы соц. поддержки и образования
+    site.ts               # навигация, общие данные сайта
+    contacts.ts           # контакты и шаги процесса
+    faq.ts                # FAQ
+    directions.ts         # страницы направлений
   layouts/
-    BaseLayout.astro      — HTML, SEO, OG
+    BaseLayout.astro      # HTML-обертка, meta, ранняя установка темы
   pages/
-    index.astro
-    404.astro
-    api/
-      contact.ts          — заглушка API формы
-    directions/
-      bpla.astro
-      communications.astro
-      engineering.astro
-      it.astro
-      medicine.astro
-      logistics.astro
-      maintenance.astro
+    index.astro           # главная страница
+    api/contact.ts        # demo API для формы
   styles/
-    global.css            — Tailwind + базовые стили + утилиты
+    global.css            # глобальные стили, темы, фон секций
 public/
+  fonts/
+  hero-bpla-training-v4.webp
   favicon.svg
   og-image.svg
-  robots.txt
 ```
-
----
 
 ## Где менять контент
 
-Контент намеренно отделён от компонентов. Чаще всего нужно править файлы в `src/data/`.
+Основные блоки главной страницы сейчас редактируются в компонентах:
 
-| Что меняем                                       | Где редактировать                          |
-| ------------------------------------------------ | ------------------------------------------ |
-| Название проекта, навигация, общий дисклеймер    | `src/data/site.ts`                         |
-| Контакты, адрес, шаги процесса                   | `src/data/contacts.ts`                     |
-| Список преимуществ                               | `src/data/benefits.ts`                     |
-| Список направлений и тексты карточек             | `src/data/directions.ts`                   |
-| Финансовые карточки и точные суммы               | `src/data/finance.ts`                      |
-| Темы соцподдержки, темы образования              | `src/data/support.ts`                      |
-| FAQ                                              | `src/data/faq.ts`                          |
-| Глобальные SEO-метаданные                        | `src/layouts/BaseLayout.astro`             |
-| Дизайн-токены (цвета, шрифт, тени)               | `tailwind.config.mjs`                      |
-| Базовый CSS, селекторы анимаций                  | `src/styles/global.css`                    |
+- `src/components/Benefits.astro` — карточки карусели и текст под ней.
+- `src/components/EducationBlock.astro` — карточки блока «Преимущества».
+- `src/components/FinanceBlock.astro` — карточки блока «Возможности для студентов».
+- `src/components/ProcessSteps.astro` — вывод шагов из `src/data/contacts.ts`.
+- `src/components/FAQ.astro` — вывод вопросов из `src/data/faq.ts`.
+- `src/components/ContactForm.astro` — поля формы и контактный блок.
+- `src/data/site.ts` — пункты меню и базовые данные сайта.
 
-### Важно про конкретные суммы
+## Темная тема
 
-Поле `amount` в `src/data/finance.ts` намеренно `null`. Когда юристы/документы подтвердят конкретные значения, можно подставить строку — например, `'от 100 000 ₽'` — и она автоматически появится на сайте вместо «Уточняется на консультации». Все спорные сведения должны опираться на официальные документы — см. `TODO.md`.
+Тема задается через атрибут на `html`:
 
----
+```html
+<html data-theme="light">
+```
 
-## Подключение реального backend для формы
+Переключатель в `Header.astro` меняет значение на `light` или `dark` и сохраняет выбор в `localStorage` по ключу `agitvuc-theme`. Основные стили тем находятся в `src/styles/global.css`.
 
-Сейчас форма отправляет POST в [src/pages/api/contact.ts](src/pages/api/contact.ts) — это заглушка. Эндпоинт:
+## Форма
 
-- валидирует обязательные поля и согласие на обработку ПДн;
-- логирует payload в dev-режиме;
-- возвращает `{ ok: true }`.
+Форма отправляет данные в `src/pages/api/contact.ts`. Сейчас это демонстрационный endpoint: он валидирует обязательные поля и возвращает успешный JSON-ответ. Для реальной отправки нужно подключить CRM, почту, Telegram-бота или другой backend-сервис.
 
-Чтобы подключить настоящую интеграцию (CRM, SMTP, очередь и т.д.):
+## Сборка
 
-1. Включите серверный режим Astro (`output: 'server'` или `'hybrid'`) в `astro.config.mjs` и добавьте подходящий адаптер (Node, Vercel, Cloudflare и пр.).
-2. В функции `POST` отправьте `payload` в нужный сервис.
-3. Добавьте антиспам (rate-limit, honeypot, токен) и логирование.
-4. Обновите политику обработки ПДн и ссылку на неё в `ContactForm.astro`.
+Перед публикацией проверьте сборку:
 
----
+```bash
+npm run build
+```
 
-## Производительность и доступность
+Готовые файлы появятся в:
 
-- Минимум клиентского JS: только мобильное меню, аккордеон FAQ работает на нативном `<details>`, отправка формы — небольшой островной скрипт.
-- Шрифт — system font stack, без подключения тяжёлых веб-шрифтов.
-- Все анимации — CSS, отключаются через `prefers-reduced-motion`.
-- Иконки — встроенные SVG (без иконочных шрифтов и больших библиотек).
-- Skip-link «Перейти к основному содержимому», semantic HTML, корректные `alt`/`aria-label`, видимый focus-ring.
-- SEO: `<title>`, `<meta description>`, Open Graph, Twitter, canonical, sitemap (`@astrojs/sitemap`), `lang="ru"`.
+```text
+dist/
+```
 
-Lighthouse-ориентир: Performance 95+, Accessibility 95+, Best Practices 95+, SEO 95+.
+## Публикация
 
----
-
-## Расширение: добавить новое направление
-
-1. Добавьте новую запись в `src/data/directions.ts` (укажите уникальный `slug`, иконку из перечня в `Icon.astro`, описание).
-2. Создайте файл `src/pages/directions/<slug>.astro` по образцу существующих:
-
-   ```astro
-   ---
-   import DirectionPage from '../../components/DirectionPage.astro';
-   ---
-   <DirectionPage slug="<slug>" />
-   ```
-
-3. Карточка автоматически появится на главной и в подвале.
-
----
-
-## Лицензия и использование
-
-Проект — шаблон информационного раздела. Перед публикацией обязательно сверьте все формулировки с юридической службой и обновите данные из `TODO.md`.
+Проект можно разместить на любом статическом хостинге: GitHub Pages, Netlify, Vercel, Timeweb Cloud, обычный nginx и т.д. Для статического размещения достаточно содержимого папки `dist/`.
