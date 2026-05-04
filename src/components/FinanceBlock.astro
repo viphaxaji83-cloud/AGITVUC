@@ -52,6 +52,51 @@ const conditions = [
     icon: 'consult',
   },
 ] as const;
+
+const studentOpportunities = [
+  {
+    title: 'Поступление вне конкурса',
+    description: 'Внеконкурсное зачисление на бюджетные места',
+    icon: 'salary',
+  },
+  {
+    title: 'Обучение за счёт университета',
+    description: 'Обучение за счёт средств университета (ВО и СПО)',
+    icon: 'compensation',
+  },
+  {
+    title: 'Приоритетный перевод на бюджет',
+    description: 'Приоритетный перевод с платного обучения на бюджет',
+    icon: 'docs',
+  },
+  {
+    title: 'Материальная поддержка',
+    description: 'Единовременная материальная помощь — 100 000 рублей',
+    icon: 'check',
+  },
+  {
+    title: 'Именные и социальные стипендии',
+    description: 'Персональные именные и социальные стипендии',
+    icon: 'clock',
+  },
+  {
+    title: 'Досрочная сдача сессии',
+    description: 'Досрочная сдача сессии и государственных экзаменов',
+    icon: 'medical',
+  },
+  {
+    title: 'Академический отпуск на время службы',
+    description:
+      'Академический отпуск на период службы с сохранением места в общежитии',
+    icon: 'legal',
+  },
+  {
+    title: 'Дистанционные вступительные испытания',
+    description:
+      'Дистанционное прохождение вступительных испытаний (за исключением медицинских специальностей)',
+    icon: 'consult',
+  },
+] as const;
 ---
 
 <section id="finance" class="conditions-section anchor-offset">
@@ -62,7 +107,7 @@ const conditions = [
 
     <div class="conditions-grid" aria-label="Условия контрактной службы">
       {
-        conditions.map((item) => (
+        studentOpportunities.map((item) => (
           <article class="conditions-card">
             <span class="conditions-card__icon" aria-hidden="true">
               <Icon name={item.icon} size={22} />

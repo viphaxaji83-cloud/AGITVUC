@@ -43,15 +43,49 @@ import { site } from '../data/site';
     </nav>
 
     <div class="hidden lg:flex items-center gap-2">
+      <button
+        type="button"
+        class="theme-toggle"
+        data-theme-toggle
+        aria-pressed="false"
+        aria-label="Включить темную тему"
+        title="Переключить тему"
+      >
+        <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">
+          <Icon name="moon" size={18} />
+        </span>
+        <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">
+          <Icon name="sun" size={18} />
+        </span>
+        <span class="theme-toggle__label" data-theme-label>Темная тема</span>
+      </button>
       <Button href="#contacts" variant="primary" size="sm">
         Получить консультацию
       </Button>
     </div>
 
+    <div class="flex items-center gap-2 lg:hidden">
+    <button
+      type="button"
+      class="theme-toggle theme-toggle--compact"
+      data-theme-toggle
+      aria-pressed="false"
+      aria-label="Включить темную тему"
+      title="Переключить тему"
+    >
+      <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">
+        <Icon name="moon" size={18} />
+      </span>
+      <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">
+        <Icon name="sun" size={18} />
+      </span>
+      <span class="sr-only" data-theme-label>Темная тема</span>
+    </button>
+
     <button
       type="button"
       id="menu-toggle"
-      class="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-ink-200 text-ink-700 hover:bg-ink-50"
+      class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-ink-200 text-ink-700 hover:bg-ink-50"
       aria-controls="mobile-menu"
       aria-expanded="false"
       aria-label="Открыть меню"
@@ -59,6 +93,7 @@ import { site } from '../data/site';
       <span data-icon="open"><Icon name="menu" /></span>
       <span data-icon="close" class="hidden"><Icon name="close" /></span>
     </button>
+    </div>
   </Container>
 
   <div
@@ -123,5 +158,45 @@ import { site } from '../data/site';
   const mq = window.matchMedia('(min-width: 1024px)');
   mq.addEventListener('change', (e) => {
     if (e.matches) setOpen(false);
+  });
+
+  const themeStorageKey = 'agitvuc-theme';
+  const themeButtons = document.querySelectorAll<HTMLButtonElement>(
+    '[data-theme-toggle]',
+  );
+  const themeColor = document.querySelector<HTMLMetaElement>(
+    'meta[data-theme-color]',
+  );
+
+  const getCurrentTheme = () =>
+    document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+
+  const setTheme = (theme: 'light' | 'dark') => {
+    const isDark = theme === 'dark';
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+    localStorage.setItem(themeStorageKey, theme);
+    themeColor?.setAttribute('content', isDark ? '#020617' : '#1d4ed8');
+
+    themeButtons.forEach((button) => {
+      button.setAttribute('aria-pressed', String(isDark));
+      button.setAttribute(
+        'aria-label',
+        isDark ? 'Включить светлую тему' : 'Включить темную тему',
+      );
+      button
+        .querySelectorAll<HTMLElement>('[data-theme-label]')
+        .forEach((label) => {
+          label.textContent = isDark ? 'Светлая тема' : 'Темная тема';
+        });
+    });
+  };
+
+  setTheme(getCurrentTheme());
+
+  themeButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      setTheme(getCurrentTheme() === 'dark' ? 'light' : 'dark');
+    });
   });
 </script>

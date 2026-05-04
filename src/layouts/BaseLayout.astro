@@ -26,12 +26,28 @@ const canonicalUrl =
 ---
 
 <!doctype html>
-<html lang="ru">
+<html lang="ru" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <script is:inline>
+      (() => {
+        const storageKey = 'agitvuc-theme';
+        const root = document.documentElement;
+        const stored = localStorage.getItem(storageKey);
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = stored === 'dark' || stored === 'light'
+          ? stored
+          : systemDark
+            ? 'dark'
+            : 'light';
+
+        root.dataset.theme = theme;
+        root.style.colorScheme = theme;
+      })();
+    </script>
 
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
@@ -42,7 +58,7 @@ const canonicalUrl =
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
-    <meta name="theme-color" content="#1d4ed8" />
+    <meta name="theme-color" content="#1d4ed8" data-theme-color />
 
     <meta property="og:type" content="website" />
     <meta property="og:locale" content={site.locale} />
@@ -60,7 +76,7 @@ const canonicalUrl =
     <meta name="format-detection" content="telephone=no" />
   </head>
 
-  <body class:list={['min-h-screen flex flex-col bg-white', bodyClass]}>
+  <body class:list={['min-h-screen flex flex-col', bodyClass]}>
     <a href="#main" class="skip-link">Перейти к основному содержимому</a>
     <slot />
   </body>
