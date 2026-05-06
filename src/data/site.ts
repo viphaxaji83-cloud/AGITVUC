@@ -36,7 +36,6 @@ export const site: SiteConfig = {
     { label: 'Направления', href: '#directions' },
     { label: 'Обучение', href: '#education' },
     { label: 'Условия', href: '#finance' },
-    { label: 'Как проходит', href: '#process' },
     { label: 'Вопросы', href: '#faq' },
     { label: 'Контакты', href: '#contacts' },
   ],

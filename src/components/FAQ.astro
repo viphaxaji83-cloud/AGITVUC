@@ -1,42 +1,244 @@
 ---
 import Container from './ui/Container.astro';
-import SectionTitle from './ui/SectionTitle.astro';
-import Icon from './ui/Icon.astro';
 import { faq } from '../data/faq';
 ---
 
-<section id="faq" class="section anchor-offset">
-  <Container class="grid gap-10 lg:grid-cols-12">
-    <div class="lg:col-span-4">
-      <SectionTitle
-        eyebrow="Частые вопросы"
-        title="Что чаще всего спрашивают студенты"
-        subtitle="Если нужного вопроса нет — напишите в форме внизу страницы. Ответим спокойно и без давления."
-      />
-    </div>
+<section id="faq" class="faq-section section anchor-offset">
+  <Container class="!max-w-[1320px]">
+    <div class="faq-browser" data-faq-browser>
+      <div class="faq-browser__questions">
+        <div class="faq-browser__heading">
+          <h2>Частые вопросы</h2>
+        </div>
 
-    <div class="lg:col-span-8">
-      <ul class="divide-y divide-ink-200 rounded-2xl border border-ink-200 bg-white">
+        <ol class="faq-question-list" aria-label="Список частых вопросов">
+          {
+            faq.map((item, i) => (
+              <li>
+                <button
+                  type="button"
+                  class:list={['faq-question', i === 0 && 'is-active']}
+                  data-faq-button
+                  data-faq-index={i}
+                  aria-controls={`faq-answer-${i}`}
+                  aria-selected={i === 0 ? 'true' : 'false'}
+                >
+                  <span class="faq-question__text">{item.question}</span>
+                </button>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <div class="faq-browser__answer" aria-live="polite">
         {
           faq.map((item, i) => (
-            <li>
-              <details class="group" {...(i === 0 ? { open: true } : {})}>
-                <summary class="flex items-center justify-between gap-4 px-5 py-4 sm:px-6 sm:py-5 hover:bg-ink-50/70 focus-visible:bg-ink-50/70 rounded-2xl">
-                  <span class="text-base sm:text-lg font-medium text-ink-900">
-                    {item.question}
-                  </span>
-                  <span class="text-brand-700 transition-transform group-open:rotate-180">
-                    <Icon name="chevron" size={22} />
-                  </span>
-                </summary>
-                <div class="px-5 pb-5 sm:px-6 sm:pb-6 text-ink-600 leading-relaxed">
-                  {item.answer}
-                </div>
-              </details>
-            </li>
+            <article
+              id={`faq-answer-${i}`}
+              class="faq-answer"
+              data-faq-panel
+              hidden={i !== 0}
+            >
+              <p>{item.answer}</p>
+            </article>
           ))
         }
-      </ul>
+      </div>
     </div>
   </Container>
 </section>
+
+<style>
+  .faq-section {
+    padding: clamp(54px, 6.5vw, 92px) 0;
+    color: #004329;
+  }
+
+  .faq-browser {
+    display: grid;
+    grid-template-columns: minmax(18rem, 0.42fr) minmax(0, 1fr);
+    min-height: clamp(220px, 20vw, 280px);
+    overflow: hidden;
+    background: transparent;
+  }
+
+  .faq-browser__questions {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+    border-right: 1px solid rgb(15 23 42 / 0.16);
+    padding: clamp(12px, 1.35vw, 18px);
+  }
+
+  .faq-browser__heading h2 {
+    margin: 0;
+    color: #004329;
+    font-size: clamp(1.65rem, 2.6vw, 2.8rem);
+    font-weight: 700;
+    line-height: 0.92;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .faq-question-list {
+    display: grid;
+    margin: clamp(26px, 3vw, 42px) 0 0;
+    padding: 0;
+    list-style: none;
+    overflow-y: auto;
+    scrollbar-color: rgb(0 67 41 / 0.32) transparent;
+  }
+
+  .faq-question-list li {
+    border-top: 1px solid rgb(15 23 42 / 0.14);
+  }
+
+  .faq-question-list li:last-child {
+    border-bottom: 1px solid rgb(15 23 42 / 0.14);
+  }
+
+  .faq-question {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    align-items: start;
+    border: 0;
+    background: transparent;
+    padding: 13px 0;
+    color: #004329;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+  }
+
+  .faq-question:hover,
+  .faq-question.is-active {
+    color: #b80008;
+  }
+
+  .faq-question__text {
+    font-size: clamp(0.94rem, 1vw, 1.04rem);
+    font-weight: 400;
+    line-height: 1.18;
+    text-wrap: balance;
+  }
+
+  .faq-browser__answer {
+    position: relative;
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(18px, 2.6vw, 34px);
+  }
+
+  .faq-answer[hidden] {
+    display: none;
+  }
+
+  .faq-answer p {
+    max-width: 54rem;
+    margin: 0;
+    color: rgb(15 23 42 / 0.68);
+    font-size: clamp(0.84rem, 0.9vw, 0.94rem);
+    line-height: 1.36;
+    text-wrap: pretty;
+  }
+
+  @media (max-width: 900px) {
+    .faq-browser {
+      grid-template-columns: 1fr;
+    }
+
+    .faq-browser__questions {
+      border-right: 0;
+    }
+
+    .faq-question-list {
+      max-height: 310px;
+    }
+
+    .faq-browser__answer {
+      min-height: 320px;
+      justify-content: flex-start;
+      padding-top: 72px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .faq-section {
+      padding: 52px 0;
+    }
+
+    .faq-browser {
+      min-height: 0;
+    }
+
+    .faq-browser__heading h2 {
+      white-space: normal;
+      text-wrap: balance;
+    }
+
+    .faq-browser__questions,
+    .faq-browser__answer {
+      padding-inline: 18px;
+    }
+
+    .faq-question {
+      padding: 16px 0;
+    }
+  }
+
+  :global(html[data-theme='dark']) .faq-browser__heading h2,
+  :global(html[data-theme='dark']) .faq-question {
+    color: #ffffff;
+  }
+
+  :global(html[data-theme='dark']) .faq-browser__questions,
+  :global(html[data-theme='dark']) .faq-question-list li {
+    border-color: rgb(148 163 184 / 0.22);
+  }
+
+  :global(html[data-theme='dark']) .faq-answer p {
+    color: #f8fafc;
+  }
+
+  :global(html[data-theme='dark']) .faq-question:hover,
+  :global(html[data-theme='dark']) .faq-question.is-active {
+    color: #bfdbfe;
+  }
+</style>
+
+<script>
+  const faqBrowsers = document.querySelectorAll<HTMLElement>('[data-faq-browser]');
+
+  faqBrowsers.forEach((browser) => {
+    const buttons = Array.from(
+      browser.querySelectorAll<HTMLButtonElement>('[data-faq-button]'),
+    );
+    const panels = Array.from(
+      browser.querySelectorAll<HTMLElement>('[data-faq-panel]'),
+    );
+
+    const selectAnswer = (index: string) => {
+      buttons.forEach((button) => {
+        const isActive = button.dataset.faqIndex === index;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+
+      panels.forEach((panel, panelIndex) => {
+        panel.hidden = String(panelIndex) !== index;
+      });
+    };
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        if (button.dataset.faqIndex) {
+          selectAnswer(button.dataset.faqIndex);
+        }
+      });
+    });
+  });
+</script>

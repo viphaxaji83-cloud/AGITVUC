@@ -8,7 +8,6 @@
 - Блок с каруселью ключевых условий.
 - Блок «Преимущества» с компактными карточками.
 - Блок «Возможности для студентов».
-- Блок с этапами процесса.
 - FAQ.
 - Контактная форма.
 - Светлая и темная темы, выбор сохраняется в `localStorage`.
@@ -51,14 +50,13 @@ src/
     Benefits.astro        # карусель и текстовый блок
     EducationBlock.astro  # блок «Преимущества»
     FinanceBlock.astro    # блок «Возможности для студентов»
-    ProcessSteps.astro    # этапы процесса
     FAQ.astro             # вопросы и ответы
     ContactForm.astro     # форма заявки
     Footer.astro          # футер
     ui/                   # базовые UI-компоненты
   data/
     site.ts               # навигация, общие данные сайта
-    contacts.ts           # контакты и шаги процесса
+    contacts.ts           # контакты
     faq.ts                # FAQ
     directions.ts         # страницы направлений
   layouts/
@@ -82,7 +80,6 @@ public/
 - `src/components/Benefits.astro` — карточки карусели и текст под ней.
 - `src/components/EducationBlock.astro` — карточки блока «Преимущества».
 - `src/components/FinanceBlock.astro` — карточки блока «Возможности для студентов».
-- `src/components/ProcessSteps.astro` — вывод шагов из `src/data/contacts.ts`.
 - `src/components/FAQ.astro` — вывод вопросов из `src/data/faq.ts`.
 - `src/components/ContactForm.astro` — поля формы и контактный блок.
 - `src/data/site.ts` — пункты меню и базовые данные сайта.
