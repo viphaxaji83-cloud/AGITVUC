@@ -11,7 +11,7 @@ import { faq } from '../data/faq';
           <h2>Частые вопросы</h2>
         </div>
 
-        <ol class="faq-question-list" aria-label="Список частых вопросов">
+        <ol class="faq-question-list" aria-label="Список частых вопросов" data-faq-scroll>
           {
             faq.map((item, i) => (
               <li>
@@ -57,7 +57,7 @@ import { faq } from '../data/faq';
 
   .faq-browser {
     display: grid;
-    grid-template-columns: minmax(18rem, 22rem) minmax(0, 46rem);
+    grid-template-columns: minmax(18rem, 25rem) minmax(0, 46rem);
     min-height: clamp(220px, 20vw, 280px);
     overflow: hidden;
     background: transparent;
@@ -67,7 +67,6 @@ import { faq } from '../data/faq';
     display: flex;
     min-height: 0;
     flex-direction: column;
-    border-right: 1px solid rgb(15 23 42 / 0.16);
     padding: clamp(12px, 1.35vw, 18px);
   }
 
@@ -83,11 +82,23 @@ import { faq } from '../data/faq';
 
   .faq-question-list {
     display: grid;
+    max-height: var(--faq-list-height, 35rem);
     margin: clamp(26px, 3vw, 42px) 0 0;
-    padding: 0;
+    padding: 0 10px 0 0;
+    border-right: 1px solid rgb(15 23 42 / 0.16);
     list-style: none;
     overflow-y: auto;
+    overscroll-behavior: contain;
     scrollbar-color: rgb(0 67 41 / 0.32) transparent;
+    scrollbar-width: thin;
+    touch-action: pan-y;
+    user-select: none;
+    cursor: grab;
+  }
+
+  .faq-question-list.is-dragging {
+    cursor: grabbing;
+    scroll-behavior: auto;
   }
 
   .faq-question-list li {
@@ -159,6 +170,7 @@ import { faq } from '../data/faq';
 
     .faq-question-list {
       max-height: 310px;
+      border-right: 0;
     }
 
     .faq-browser__answer {
@@ -197,7 +209,7 @@ import { faq } from '../data/faq';
     color: #ffffff;
   }
 
-  :global(html[data-theme='dark']) .faq-browser__questions,
+  :global(html[data-theme='dark']) .faq-question-list,
   :global(html[data-theme='dark']) .faq-question-list li {
     border-color: rgb(148 163 184 / 0.22);
   }
@@ -222,6 +234,18 @@ import { faq } from '../data/faq';
     const panels = Array.from(
       browser.querySelectorAll<HTMLElement>('[data-faq-panel]'),
     );
+    const questionList = browser.querySelector<HTMLElement>('[data-faq-scroll]');
+
+    const setQuestionListHeight = () => {
+      if (!questionList || questionList.children.length <= 10) {
+        questionList?.style.removeProperty('--faq-list-height');
+        return;
+      }
+
+      const visibleItems = Array.from(questionList.children).slice(0, 10) as HTMLElement[];
+      const height = visibleItems.reduce((sum, item) => sum + item.offsetHeight, 0);
+      questionList.style.setProperty('--faq-list-height', `${height}px`);
+    };
 
     const selectAnswer = (index: string) => {
       buttons.forEach((button) => {
@@ -242,5 +266,72 @@ import { faq } from '../data/faq';
         }
       });
     });
+
+    if (questionList) {
+      let startY = 0;
+      let startScrollTop = 0;
+      let activePointerId: number | null = null;
+      let hasDragged = false;
+      let suppressClick = false;
+
+      questionList.addEventListener(
+        'click',
+        (event) => {
+          if (suppressClick) {
+            event.preventDefault();
+            event.stopPropagation();
+            suppressClick = false;
+          }
+        },
+        true,
+      );
+
+      questionList.addEventListener('pointerdown', (event) => {
+        if (event.pointerType !== 'mouse' || event.button !== 0) {
+          return;
+        }
+
+        activePointerId = event.pointerId;
+        startY = event.clientY;
+        startScrollTop = questionList.scrollTop;
+        hasDragged = false;
+      });
+
+      window.addEventListener('pointermove', (event) => {
+        if (activePointerId !== event.pointerId) {
+          return;
+        }
+
+        const deltaY = event.clientY - startY;
+        if (Math.abs(deltaY) > 3) {
+          hasDragged = true;
+          questionList.classList.add('is-dragging');
+          questionList.scrollTop = startScrollTop - deltaY;
+          event.preventDefault();
+        }
+      });
+
+      const finishDrag = (event: PointerEvent) => {
+        if (activePointerId !== event.pointerId) {
+          return;
+        }
+
+        activePointerId = null;
+        questionList.classList.remove('is-dragging');
+
+        if (hasDragged) {
+          suppressClick = true;
+          window.setTimeout(() => {
+            suppressClick = false;
+          }, 120);
+        }
+      };
+
+      window.addEventListener('pointerup', finishDrag);
+      window.addEventListener('pointercancel', finishDrag);
+    }
+
+    setQuestionListHeight();
+    window.addEventListener('resize', setQuestionListHeight);
   });
 </script>
