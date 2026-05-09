@@ -3,7 +3,6 @@ import Container from './ui/Container.astro';
 import Icon from './ui/Icon.astro';
 import { site } from '../data/site';
 import { contacts } from '../data/contacts';
-import { directions } from '../data/directions';
 
 const year = new Date().getFullYear();
 ---
@@ -11,7 +10,7 @@ const year = new Date().getFullYear();
 <footer class="mt-auto border-t border-ink-200 bg-white">
   <Container class="py-12 sm:py-14">
     <div class="grid gap-10 lg:grid-cols-12">
-      <div class="lg:col-span-4 flex flex-col gap-4">
+      <div class="lg:col-span-5 flex flex-col gap-4">
         <div class="flex items-center gap-3">
           <span
             class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-brand-700 text-white"
@@ -23,9 +22,6 @@ const year = new Date().getFullYear();
             {site.name}
           </span>
         </div>
-        <p class="text-sm text-ink-600 leading-relaxed">
-          {site.legalDisclaimer}
-        </p>
       </div>
 
       <div class="lg:col-span-3">
@@ -48,27 +44,7 @@ const year = new Date().getFullYear();
         </ul>
       </div>
 
-      <div class="lg:col-span-3">
-        <h2 class="text-sm font-semibold uppercase tracking-wider text-ink-500">
-          Направления
-        </h2>
-        <ul class="mt-4 grid gap-2 text-sm">
-          {
-            directions.map((d) => (
-              <li>
-                <a
-                  href={`/directions/${d.slug}/`}
-                  class="text-ink-700 hover:text-brand-800"
-                >
-                  {d.title}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-
-      <div class="lg:col-span-2 flex flex-col gap-3 text-sm">
+      <div class="lg:col-span-4 flex flex-col gap-3 text-sm">
         <h2 class="text-sm font-semibold uppercase tracking-wider text-ink-500">
           Контакты
         </h2>
@@ -90,17 +66,21 @@ const year = new Date().getFullYear();
           <Icon name="pin" size={16} />
           <span>{contacts.address}</span>
         </span>
+        <span class="flex items-start gap-2 text-ink-600">
+          <Icon name="clock" size={16} />
+          <span>{contacts.workingHours}</span>
+        </span>
+        <span class="flex items-start gap-2 text-ink-600">
+          <Icon name="shield-info" size={16} />
+          <span>{contacts.responsibleUnit}</span>
+        </span>
       </div>
     </div>
 
     <div
       class="mt-10 flex flex-col gap-2 border-t border-ink-200 pt-6 text-xs text-ink-500 sm:flex-row sm:items-center sm:justify-between"
     >
-      <span>© {year} {site.university}. {site.shortName}.</span>
-      <span>
-        Информационный материал. Все условия проверяются по официальным
-        документам.
-      </span>
+      <span>© {year} МГТУ. {site.shortName}.</span>
     </div>
   </Container>
 </footer>

@@ -5,6 +5,9 @@ import sitemap from '@astrojs/sitemap';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://example.university',
+  devToolbar: {
+    enabled: false,
+  },
   integrations: [
     tailwind({
       applyBaseStyles: false,

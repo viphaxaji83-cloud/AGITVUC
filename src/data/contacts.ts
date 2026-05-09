@@ -11,12 +11,13 @@ export interface ContactInfo {
 }
 
 export const contacts: ContactInfo = {
-  phone: '+7 (000) 000-00-00',
-  phoneHref: 'tel:+70000000000',
-  email: 'info@example.university',
-  address: 'г. Город, ул. Университетская, д. 1, корпус N',
-  workingHours: 'Пн–Пт, 09:00–18:00 (по местному времени)',
-  responsibleUnit: 'Отдел по работе со студентами',
+  phone: '8 (8772) 57-04-71',
+  phoneHref: 'tel:+78772570471',
+  email: 'prorector_sbvr@mkgtu.ru',
+  address: 'г. Майкоп, ул. Первомайская д. 191',
+  workingHours: 'ПН-ПТ, 09:00 - 18:00 (ПО МСК)',
+  responsibleUnit:
+    'Управление по молодёжной политике и воспитательной деятельности МГТУ',
   officialDocsUrl: '#',
   officialDocsLabel: 'Раздел официальных документов',
   socials: [

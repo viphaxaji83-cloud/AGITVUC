@@ -4,115 +4,105 @@ import SectionTitle from './ui/SectionTitle.astro';
 import Card from './ui/Card.astro';
 import Icon from './ui/Icon.astro';
 import Button from './ui/Button.astro';
-import DisclaimerNote from './ui/DisclaimerNote.astro';
-import { directions } from '../data/directions';
 import { contacts } from '../data/contacts';
 import { site } from '../data/site';
 ---
 
-<section id="contacts" class="section anchor-offset">
+<section id="contacts" class="section contact-section anchor-offset">
   <Container class="grid gap-10 lg:grid-cols-12">
     <div class="lg:col-span-5 flex flex-col gap-6">
       <SectionTitle
-        eyebrow="Контакты и заявка"
+        class="contact-section__title"
         title="Запишитесь на консультацию"
         subtitle="Заполните короткую форму или свяжитесь напрямую. Мы перезвоним и спокойно ответим на ваши вопросы. Заявка не обязывает к подписанию каких-либо документов."
       />
 
-      <Card variant="soft" class="flex flex-col gap-4">
+      <Card variant="soft" class="contact-card contact-info-card flex flex-col gap-4">
         <div class="grid gap-3 text-sm">
           <a
             href={contacts.phoneHref}
-            class="flex items-center gap-3 group"
+            class="contact-row flex items-center gap-3 group"
           >
-            <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-ink-200 text-brand-700">
+            <span class="contact-row__icon inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-ink-200 text-brand-700">
               <Icon name="phone" size={20} />
             </span>
             <div>
-              <div class="text-xs uppercase tracking-wider text-ink-500">
+              <div class="contact-row__label text-xs uppercase tracking-wider text-ink-500">
                 Телефон
               </div>
-              <div class="text-base font-medium text-ink-900 group-hover:text-brand-800">
+              <div class="contact-row__value text-base font-medium text-ink-900 group-hover:text-brand-800">
                 {contacts.phone}
               </div>
             </div>
           </a>
           <a
             href={`mailto:${contacts.email}`}
-            class="flex items-center gap-3 group"
+            class="contact-row flex items-center gap-3 group"
           >
-            <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-ink-200 text-brand-700">
+            <span class="contact-row__icon inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-ink-200 text-brand-700">
               <Icon name="mail" size={20} />
             </span>
             <div>
-              <div class="text-xs uppercase tracking-wider text-ink-500">
+              <div class="contact-row__label text-xs uppercase tracking-wider text-ink-500">
                 Email
               </div>
-              <div class="text-base font-medium text-ink-900 group-hover:text-brand-800">
+              <div class="contact-row__value text-base font-medium text-ink-900 group-hover:text-brand-800">
                 {contacts.email}
               </div>
             </div>
           </a>
-          <div class="flex items-center gap-3">
-            <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-ink-200 text-brand-700">
+          <div class="contact-row flex items-center gap-3">
+            <span class="contact-row__icon inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-ink-200 text-brand-700">
               <Icon name="pin" size={20} />
             </span>
             <div>
-              <div class="text-xs uppercase tracking-wider text-ink-500">
+              <div class="contact-row__label text-xs uppercase tracking-wider text-ink-500">
                 Адрес
               </div>
-              <div class="text-base font-medium text-ink-900">
+              <div class="contact-row__value text-base font-medium text-ink-900">
                 {contacts.address}
               </div>
             </div>
           </div>
-          <div class="flex items-center gap-3">
-            <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-ink-200 text-brand-700">
+          <div class="contact-row flex items-center gap-3">
+            <span class="contact-row__icon inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-ink-200 text-brand-700">
               <Icon name="clock" size={20} />
             </span>
             <div>
-              <div class="text-xs uppercase tracking-wider text-ink-500">
+              <div class="contact-row__label text-xs uppercase tracking-wider text-ink-500">
                 График работы
               </div>
-              <div class="text-base font-medium text-ink-900">
+              <div class="contact-row__value text-base font-medium text-ink-900">
                 {contacts.workingHours}
               </div>
             </div>
           </div>
         </div>
 
-        <div class="rounded-xl bg-white border border-ink-200 px-3 py-2.5 text-sm">
-          <span class="text-xs uppercase tracking-wider text-ink-500">
+        <div class="contact-unit rounded-xl bg-white border border-ink-200 px-3 py-2.5 text-sm">
+          <span class="contact-row__label text-xs uppercase tracking-wider text-ink-500">
             Ответственное подразделение
           </span>
-          <div class="text-ink-800 font-medium">
+          <div class="contact-row__value text-ink-800 font-medium">
             {contacts.responsibleUnit}
           </div>
         </div>
 
-        <a
-          href={contacts.officialDocsUrl}
-          class="inline-flex items-center gap-2 text-sm font-medium text-brand-800 hover:text-brand-900"
-        >
-          {contacts.officialDocsLabel}
-          <Icon name="arrow-right" size={16} />
-        </a>
       </Card>
     </div>
 
-    <div class="lg:col-span-7">
-      <Card class="flex flex-col gap-5" variant="default">
+    <div class="lg:col-span-7 flex">
+      <Card class="contact-card contact-form-card flex flex-col gap-5 w-full h-full" variant="default">
         <form
           id="contact-form"
           action="/api/contact"
           method="POST"
           novalidate
-          class="grid gap-4 sm:grid-cols-2"
-          aria-describedby="form-helper"
+          class="contact-form grid gap-4 sm:grid-cols-2"
         >
-          <div class="sm:col-span-1">
-            <label for="name" class="block text-sm font-medium text-ink-800">
-              Имя <span class="text-accent-red">*</span>
+          <div class="sm:col-span-2">
+            <label for="name" class="contact-label block text-sm font-medium text-ink-800">
+              ФИО <span class="text-accent-red">*</span>
             </label>
             <input
               id="name"
@@ -120,13 +110,13 @@ import { site } from '../data/site';
               type="text"
               required
               autocomplete="name"
-              class="mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 placeholder:text-ink-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
-              placeholder="Как к вам обращаться"
+              class="contact-field mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 placeholder:text-ink-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
+              placeholder="Введите ФИО"
             />
           </div>
 
           <div class="sm:col-span-1">
-            <label for="phone" class="block text-sm font-medium text-ink-800">
+            <label for="phone" class="contact-label block text-sm font-medium text-ink-800">
               Телефон <span class="text-accent-red">*</span>
             </label>
             <input
@@ -136,13 +126,13 @@ import { site } from '../data/site';
               required
               autocomplete="tel"
               inputmode="tel"
-              class="mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 placeholder:text-ink-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
+              class="contact-field mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 placeholder:text-ink-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
               placeholder="+7 ___ ___ __ __"
             />
           </div>
 
           <div class="sm:col-span-1">
-            <label for="email" class="block text-sm font-medium text-ink-800">
+            <label for="email" class="contact-label block text-sm font-medium text-ink-800">
               Email
             </label>
             <input
@@ -150,40 +140,19 @@ import { site } from '../data/site';
               name="email"
               type="email"
               autocomplete="email"
-              class="mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 placeholder:text-ink-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
+              class="contact-field mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 placeholder:text-ink-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
               placeholder="you@example.com"
             />
           </div>
 
-          <div class="sm:col-span-1">
-            <label
-              for="direction"
-              class="block text-sm font-medium text-ink-800"
-            >
-              Направление интереса
-            </label>
-            <select
-              id="direction"
-              name="direction"
-              class="mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
-            >
-              <option value="">Не определился(-ась)</option>
-              {
-                directions.map((d) => (
-                  <option value={d.slug}>{d.title}</option>
-                ))
-              }
-            </select>
-          </div>
-
           <div class="sm:col-span-2">
-            <label for="status" class="block text-sm font-medium text-ink-800">
+            <label for="status" class="contact-label block text-sm font-medium text-ink-800">
               Статус студента
             </label>
             <select
               id="status"
               name="status"
-              class="mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
+              class="contact-field mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
             >
               <option value="">Выберите вариант</option>
               <option value="bachelor">Бакалавриат</option>
@@ -198,7 +167,7 @@ import { site } from '../data/site';
           <div class="sm:col-span-2">
             <label
               for="comment"
-              class="block text-sm font-medium text-ink-800"
+              class="contact-label block text-sm font-medium text-ink-800"
             >
               Комментарий
             </label>
@@ -206,13 +175,13 @@ import { site } from '../data/site';
               id="comment"
               name="comment"
               rows="4"
-              class="mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 placeholder:text-ink-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
+              class="contact-field mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 placeholder:text-ink-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
               placeholder="Если есть конкретные вопросы — напишите здесь"
             ></textarea>
           </div>
 
           <div class="sm:col-span-2">
-            <label class="flex items-start gap-3 text-sm text-ink-700">
+            <label class="contact-consent flex items-start gap-3 text-sm text-ink-700">
               <input
                 type="checkbox"
                 name="consent"
@@ -229,15 +198,7 @@ import { site } from '../data/site';
             </label>
           </div>
 
-          <div
-            id="form-helper"
-            class="sm:col-span-2 text-xs text-ink-500 leading-relaxed"
-          >
-            Поля, отмеченные звёздочкой, обязательны. Заявка ни к чему не
-            обязывает — это запись на консультацию.
-          </div>
-
-          <div class="sm:col-span-2 flex flex-col-reverse sm:flex-row sm:items-center gap-3 sm:gap-4">
+          <div class="contact-submit-row sm:col-span-2 flex flex-col-reverse sm:flex-row sm:items-center gap-3 sm:gap-4">
             <p
               id="form-status"
               class="text-sm text-ink-600 min-h-[1.25rem]"
@@ -252,15 +213,179 @@ import { site } from '../data/site';
           </div>
         </form>
       </Card>
-
-      <DisclaimerNote
-        class="mt-4"
-        variant="soft"
-        text="Форма пока работает в демонстрационном режиме: данные не отправляются во внешние сервисы. Подключите backend в /src/pages/api/contact.ts."
-      />
     </div>
   </Container>
 </section>
+
+<style>
+  :global(.contact-section__title h2) {
+    color: #004329;
+    font-weight: 600;
+    line-height: 1.02;
+  }
+
+  :global(.contact-section__title p) {
+    max-width: 34rem;
+    color: rgb(15 23 42 / 0.72);
+    font-size: clamp(1rem, 1.04vw, 1.12rem);
+    font-weight: 400;
+    line-height: 1.52;
+  }
+
+  :global(.contact-card) {
+    border: 1px solid rgb(15 23 42 / 0.16);
+    border-radius: 8px;
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 0.76), rgb(255 255 255 / 0.52)),
+      rgb(255 255 255 / 0.44);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.78),
+      0 16px 36px rgb(15 23 42 / 0.06);
+  }
+
+  :global(.contact-info-card) {
+    padding: clamp(18px, 1.8vw, 24px);
+  }
+
+  :global(.contact-form-card) {
+    padding: clamp(20px, 2.25vw, 30px);
+  }
+
+  :global(.contact-form) {
+    min-height: 100%;
+  }
+
+  :global(.contact-submit-row) {
+    align-self: end;
+  }
+
+  :global(.contact-row) {
+    border-radius: 8px;
+    padding: 8px;
+    transition:
+      background-color 180ms ease,
+      transform 180ms ease;
+  }
+
+  :global(.contact-row:hover) {
+    background: rgb(255 255 255 / 0.5);
+    transform: translateY(-1px);
+  }
+
+  :global(.contact-row__icon) {
+    flex: 0 0 auto;
+    border-color: rgb(15 23 42 / 0.14);
+    border-radius: 8px;
+    background: rgb(255 255 255 / 0.72);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.82);
+  }
+
+  :global(.contact-row__label),
+  :global(.contact-label) {
+    color: rgb(0 67 41 / 0.78);
+    font-weight: 500;
+  }
+
+  :global(.contact-row__value) {
+    color: #0f172a;
+    font-weight: 400;
+    line-height: 1.25;
+  }
+
+  :global(.contact-unit) {
+    border-color: rgb(15 23 42 / 0.14);
+    border-radius: 8px;
+    background: rgb(255 255 255 / 0.55);
+  }
+
+  :global(.contact-field) {
+    min-height: 48px;
+    border-color: rgb(15 23 42 / 0.16);
+    border-radius: 8px;
+    background: rgb(255 255 255 / 0.68);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.72);
+    transition:
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      background-color 180ms ease;
+  }
+
+  :global(.contact-field:focus) {
+    border-color: rgb(29 78 216 / 0.45);
+    background: rgb(255 255 255 / 0.92);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.82),
+      0 0 0 4px rgb(29 78 216 / 0.12);
+  }
+
+  :global(.contact-consent) {
+    color: rgb(15 23 42 / 0.72);
+    font-weight: 400;
+    line-height: 1.45;
+  }
+
+  :global(html[data-theme='dark'] .contact-section__title h2) {
+    color: #ffffff;
+  }
+
+  :global(html[data-theme='dark'] .contact-section__title p),
+  :global(html[data-theme='dark'] .contact-consent) {
+    color: #dbe4ef;
+  }
+
+  :global(html[data-theme='dark'] .contact-card) {
+    border-color: rgb(148 163 184 / 0.22);
+    background:
+      linear-gradient(180deg, rgb(15 23 42 / 0.86), rgb(15 23 42 / 0.62)),
+      rgb(15 23 42 / 0.72);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.08),
+      0 18px 42px rgb(0 0 0 / 0.22);
+  }
+
+  :global(html[data-theme='dark'] .contact-row:hover) {
+    background: rgb(255 255 255 / 0.05);
+  }
+
+  :global(html[data-theme='dark'] .contact-row__icon),
+  :global(html[data-theme='dark'] .contact-unit) {
+    border-color: rgb(148 163 184 / 0.24) !important;
+    background: rgb(15 23 42 / 0.78) !important;
+  }
+
+  :global(html[data-theme='dark'] .contact-row__label),
+  :global(html[data-theme='dark'] .contact-label) {
+    color: #bfdbfe !important;
+  }
+
+  :global(html[data-theme='dark'] .contact-row__value) {
+    color: #f8fafc !important;
+  }
+
+  :global(html[data-theme='dark'] .contact-field) {
+    border-color: rgb(148 163 184 / 0.24) !important;
+    background: rgb(15 23 42 / 0.78) !important;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06);
+  }
+
+  :global(html[data-theme='dark'] .contact-field:focus) {
+    border-color: rgb(147 197 253 / 0.5) !important;
+    background: rgb(15 23 42 / 0.92) !important;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.08),
+      0 0 0 4px rgb(96 165 250 / 0.16);
+  }
+
+  @media (max-width: 640px) {
+    :global(.contact-row) {
+      padding: 6px 0;
+    }
+
+    :global(.contact-form-card) {
+      padding: 18px;
+    }
+  }
+</style>
 
 <script>
   const form = document.getElementById('contact-form') as HTMLFormElement | null;
