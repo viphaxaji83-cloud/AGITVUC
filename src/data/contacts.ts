@@ -3,7 +3,6 @@ export interface ContactInfo {
   phoneHref: string;
   email: string;
   address: string;
-  workingHours: string;
   responsibleUnit: string;
   officialDocsUrl: string;
   officialDocsLabel: string;
@@ -15,7 +14,6 @@ export const contacts: ContactInfo = {
   phoneHref: 'tel:+78772570471',
   email: 'prorector_sbvr@mkgtu.ru',
   address: 'г. Майкоп, ул. Первомайская д. 191',
-  workingHours: '09:00 - 17:00',
   responsibleUnit:
     'Управление по молодёжной политике и воспитательной деятельности МГТУ',
   officialDocsUrl: '#',
