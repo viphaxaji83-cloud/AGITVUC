@@ -10,19 +10,7 @@ const year = new Date().getFullYear();
 <footer class="mt-auto border-t border-ink-200 bg-white">
   <Container class="py-12 sm:py-14">
     <div class="grid gap-10 lg:grid-cols-12">
-      <div class="lg:col-span-5 flex flex-col gap-4">
-        <div class="flex items-center gap-3">
-          <span
-            class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-brand-700 text-white"
-            aria-hidden="true"
-          >
-            <span class="text-sm font-bold">{site.shortName}</span>
-          </span>
-          <span class="text-base font-semibold text-ink-900">
-            {site.name}
-          </span>
-        </div>
-      </div>
+      <div class="hidden lg:block lg:col-span-5"></div>
 
       <div class="lg:col-span-3">
         <h2 class="text-sm font-semibold uppercase tracking-wider text-ink-500">
@@ -78,9 +66,9 @@ const year = new Date().getFullYear();
     </div>
 
     <div
-      class="mt-10 flex flex-col gap-2 border-t border-ink-200 pt-6 text-xs text-ink-500 sm:flex-row sm:items-center sm:justify-between"
+      class="mt-10 flex justify-center border-t border-ink-200 pt-6 text-center text-xs text-ink-500"
     >
-      <span>© {year} МГТУ. {site.shortName}.</span>
+      <span>© {year} МГТУ.</span>
     </div>
   </Container>
 </footer>

@@ -5,7 +5,6 @@ import Card from './ui/Card.astro';
 import Icon from './ui/Icon.astro';
 import Button from './ui/Button.astro';
 import { contacts } from '../data/contacts';
-import { site } from '../data/site';
 ---
 
 <section id="contacts" class="section contact-section anchor-offset">
@@ -14,7 +13,7 @@ import { site } from '../data/site';
       <SectionTitle
         class="contact-section__title"
         title="Запишитесь на консультацию"
-        subtitle="Заполните короткую форму или свяжитесь напрямую. Мы перезвоним и спокойно ответим на ваши вопросы. Заявка не обязывает к подписанию каких-либо документов."
+        subtitle="Заполните короткую форму или свяжитесь напрямую. Мы перезвоним и ответим на ваши вопросы. Заявка не обязывает к подписанию каких-либо документов."
       />
 
       <Card variant="soft" class="contact-card contact-info-card flex flex-col gap-4">
@@ -126,6 +125,8 @@ import { site } from '../data/site';
               required
               autocomplete="tel"
               inputmode="tel"
+              pattern="[0-9+()\s-]*"
+              data-phone-input
               class="contact-field mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 placeholder:text-ink-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
               placeholder="+7 ___ ___ __ __"
             />
@@ -141,7 +142,7 @@ import { site } from '../data/site';
               type="email"
               autocomplete="email"
               class="contact-field mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 placeholder:text-ink-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
-              placeholder="you@example.com"
+              placeholder="you@example.ru"
             />
           </div>
 
@@ -149,19 +150,27 @@ import { site } from '../data/site';
             <label for="status" class="contact-label block text-sm font-medium text-ink-800">
               Статус студента
             </label>
-            <select
-              id="status"
-              name="status"
-              class="contact-field mt-1.5 block w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
-            >
-              <option value="">Выберите вариант</option>
-              <option value="bachelor">Бакалавриат</option>
-              <option value="specialist">Специалитет</option>
-              <option value="master">Магистратура</option>
-              <option value="postgrad">Аспирантура</option>
-              <option value="college">Колледж / СПО</option>
-              <option value="other">Другое</option>
-            </select>
+            <div class="relative mt-1.5">
+              <select
+                id="status"
+                name="status"
+                class="contact-field contact-select block w-full appearance-none rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 pr-11 text-base text-ink-900 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/20"
+              >
+                <option value="">Выберите вариант</option>
+                <option value="bachelor">Бакалавриат</option>
+                <option value="specialist">Специалитет</option>
+                <option value="master">Магистратура</option>
+                <option value="postgrad">Аспирантура</option>
+                <option value="college">Колледж / СПО</option>
+                <option value="other">Другое</option>
+              </select>
+              <span
+                class="contact-select__icon pointer-events-none absolute right-3.5 top-1/2 inline-flex -translate-y-1/2 text-ink-500"
+                aria-hidden="true"
+              >
+                <Icon name="chevron" size={18} />
+              </span>
+            </div>
           </div>
 
           <div class="sm:col-span-2">
@@ -190,10 +199,12 @@ import { site } from '../data/site';
               />
               <span>
                 Я соглашаюсь на обработку персональных данных в соответствии с
-                <a href="#" class="text-brand-800 underline hover:text-brand-900">
-                  политикой обработки персональных данных
+                <a
+                  href="https://mkgtu.ru/privacy/"
+                  class="text-brand-800 underline hover:text-brand-900"
+                >
+                  политикой обработки персональных данных.
                 </a>
-                {site.shortName}.
               </span>
             </label>
           </div>
@@ -207,7 +218,7 @@ import { site } from '../data/site';
             >
             </p>
             <Button type="submit" size="lg" class="sm:ml-auto">
-              Оставить заявку
+              Получить консультацию
               <Icon name="arrow-right" size={18} />
             </Button>
           </div>
@@ -318,6 +329,14 @@ import { site } from '../data/site';
       0 0 0 4px rgb(29 78 216 / 0.12);
   }
 
+  :global(.contact-select) {
+    background-image: none;
+  }
+
+  :global(.contact-select__icon) {
+    color: rgb(71 85 105 / 0.88);
+  }
+
   :global(.contact-consent) {
     color: rgb(15 23 42 / 0.72);
     font-weight: 400;
@@ -376,6 +395,10 @@ import { site } from '../data/site';
       0 0 0 4px rgb(96 165 250 / 0.16);
   }
 
+  :global(html[data-theme='dark'] .contact-select__icon) {
+    color: #cbd5e1;
+  }
+
   @media (max-width: 640px) {
     :global(.contact-row) {
       padding: 6px 0;
@@ -390,6 +413,41 @@ import { site } from '../data/site';
 <script>
   const form = document.getElementById('contact-form') as HTMLFormElement | null;
   const status = document.getElementById('form-status');
+  const phoneInput = document.querySelector<HTMLInputElement>('[data-phone-input]');
+
+  if (phoneInput) {
+    const invalidPhoneCharacter = /[^\d\s()+-]/;
+    const invalidPhoneCharacters = /[^\d\s()+-]/g;
+
+    const sanitizePhoneInput = () => {
+      const value = phoneInput.value;
+      const cleanedValue = value.replace(invalidPhoneCharacters, '');
+
+      if (value === cleanedValue) return;
+
+      const cursorPosition = phoneInput.selectionStart ?? value.length;
+      const nextCursorPosition = value
+        .slice(0, cursorPosition)
+        .replace(invalidPhoneCharacters, '').length;
+
+      phoneInput.value = cleanedValue;
+      phoneInput.setSelectionRange(nextCursorPosition, nextCursorPosition);
+    };
+
+    phoneInput.addEventListener('beforeinput', (event) => {
+      const inputEvent = event as InputEvent;
+
+      if (
+        inputEvent.inputType === 'insertText' &&
+        inputEvent.data &&
+        invalidPhoneCharacter.test(inputEvent.data)
+      ) {
+        event.preventDefault();
+      }
+    });
+
+    phoneInput.addEventListener('input', sanitizePhoneInput);
+  }
 
   if (form && status) {
     form.addEventListener('submit', async (e) => {

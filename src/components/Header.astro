@@ -9,21 +9,27 @@ import { site } from '../data/site';
   <Container class="flex h-16 items-center justify-between gap-3">
     <a
       href="/"
-      class="flex items-center gap-3 group"
+      class="site-logo site-logo--header group"
       aria-label={`${site.shortName} — на главную`}
     >
-      <span
-        class="relative inline-flex h-9 w-9 items-center justify-center rounded-xl bg-brand-700 text-white shadow-soft"
-        aria-hidden="true"
-      >
-        <span class="text-sm font-bold tracking-tight">{site.shortName}</span>
-      </span>
-      <span class="hidden sm:flex flex-col leading-tight">
-        <span class="text-sm font-semibold text-ink-900">
-          {site.name}
-        </span>
-        <span class="text-xs text-ink-500">{site.university}</span>
-      </span>
+      <img
+        class="site-logo__image site-logo__image--light"
+        src="/logos/logo_black.png"
+        alt=""
+        width="1034"
+        height="410"
+        loading="eager"
+        decoding="async"
+      />
+      <img
+        class="site-logo__image site-logo__image--dark"
+        src="/logos/logo_white.png"
+        alt=""
+        width="1035"
+        height="411"
+        loading="eager"
+        decoding="async"
+      />
     </a>
 
     <nav
@@ -43,9 +49,12 @@ import { site } from '../data/site';
     </nav>
 
     <div class="hidden lg:flex items-center gap-2">
+      <Button href="#contacts" variant="primary" size="sm" class="whitespace-nowrap">
+        Получить консультацию
+      </Button>
       <button
         type="button"
-        class="theme-toggle"
+        class="theme-toggle theme-toggle--compact"
         data-theme-toggle
         aria-pressed="false"
         aria-label="Включить темную тему"
@@ -57,11 +66,7 @@ import { site } from '../data/site';
         <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">
           <Icon name="sun" size={18} />
         </span>
-        <span class="theme-toggle__label" data-theme-label>Темная тема</span>
       </button>
-      <Button href="#contacts" variant="primary" size="sm" class="whitespace-nowrap">
-        Оставить заявку
-      </Button>
     </div>
 
     <div class="flex items-center gap-2 lg:hidden">
@@ -119,7 +124,7 @@ import { site } from '../data/site';
       </nav>
       <div class="mt-4">
         <Button href="#contacts" variant="primary" fullWidth>
-          Оставить заявку
+          Получить консультацию
         </Button>
       </div>
     </Container>
