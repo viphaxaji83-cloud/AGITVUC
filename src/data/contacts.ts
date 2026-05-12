@@ -15,7 +15,7 @@ export const contacts: ContactInfo = {
   phoneHref: 'tel:+78772570471',
   email: 'prorector_sbvr@mkgtu.ru',
   address: 'г. Майкоп, ул. Первомайская д. 191',
-  workingHours: 'ПН-ПТ, 09:00 - 18:00 (ПО МСК)',
+  workingHours: '09:00 - 17:00',
   responsibleUnit:
     'Управление по молодёжной политике и воспитательной деятельности МГТУ',
   officialDocsUrl: '#',
