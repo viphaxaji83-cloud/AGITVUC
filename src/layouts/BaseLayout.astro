@@ -37,12 +37,9 @@ const canonicalUrl =
         const storageKey = 'agitvuc-theme';
         const root = document.documentElement;
         const stored = localStorage.getItem(storageKey);
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const theme = stored === 'dark' || stored === 'light'
           ? stored
-          : systemDark
-            ? 'dark'
-            : 'light';
+          : 'light';
 
         root.dataset.theme = theme;
         root.style.colorScheme = theme;
