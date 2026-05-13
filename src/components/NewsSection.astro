@@ -3,38 +3,59 @@ import Container from './ui/Container.astro';
 import Button from './ui/Button.astro';
 import Icon from './ui/Icon.astro';
 import NewsCard from './news/NewsCard.astro';
-import { getLatestNews } from '../data/news';
-
-const latestNews = getLatestNews(3);
+import { news } from '../data/news';
 ---
 
-<section id="news" class="news-section section anchor-offset">
-  <Container class="!max-w-[1320px]">
+<section id="news" class="news-section section anchor-offset" data-news-carousel>
+  <Container class="!max-w-[1220px]">
     <div class="news-section__header">
       <div>
-        <p class="news-section__eyebrow">Новости</p>
-        <h2>Последние новости</h2>
+        <h2>Новости</h2>
       </div>
 
-      <Button href="/news" variant="secondary" class="news-section__all">
-        Все новости
-        <Icon name="arrow-right" size={18} />
-      </Button>
+      <div class="news-section__actions">
+        <button
+          type="button"
+          class="news-section__arrow news-section__arrow--prev"
+          aria-label="Показать предыдущие новости"
+          data-news-prev
+        >
+          <Icon name="arrow-right" size={18} />
+        </button>
+        <button
+          type="button"
+          class="news-section__arrow"
+          aria-label="Показать следующие новости"
+          data-news-next
+        >
+          <Icon name="arrow-right" size={18} />
+        </button>
+        <Button href="/news" variant="secondary" class="news-section__all">
+          Все новости
+          <Icon name="arrow-right" size={18} />
+        </Button>
+      </div>
     </div>
 
-    <div class="news-section__grid">
-      {
-        latestNews.map((item, index) => (
-          <NewsCard news={item} priority={index === 0} />
-        ))
-      }
+    <div class="news-section__viewport" data-news-viewport tabindex="0">
+      <div class="news-section__track" data-news-track>
+        {
+          news.map((item, index) => (
+            <div class="news-section__slide">
+              <NewsCard news={item} priority={index === 0} />
+            </div>
+          ))
+        }
+      </div>
     </div>
   </Container>
 </section>
 
 <style>
   .news-section {
+    --news-gap: clamp(16px, 2vw, 24px);
     color: #004329;
+    padding-block: clamp(42px, 4.8vw, 66px);
   }
 
   .news-section__header {
@@ -42,33 +63,105 @@ const latestNews = getLatestNews(3);
     align-items: end;
     justify-content: space-between;
     gap: 24px;
-    margin-bottom: clamp(24px, 3vw, 38px);
-  }
-
-  .news-section__eyebrow {
-    margin: 0 0 8px;
-    color: #b80008;
-    font-size: 0.82rem;
-    font-weight: 800;
-    letter-spacing: 0.16em;
-    line-height: 1.2;
-    text-transform: uppercase;
+    margin-bottom: clamp(22px, 2.8vw, 34px);
   }
 
   .news-section__header h2 {
     margin: 0;
     color: #004329;
-    font-size: clamp(2.4rem, 5.5vw, 5.7rem);
-    font-weight: 800;
+    font-size: 2rem;
+    font-weight: 700;
     letter-spacing: 0;
     line-height: 0.94;
     text-transform: uppercase;
   }
 
-  .news-section__grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(16px, 2vw, 24px);
+  .news-section__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .news-section__arrow {
+    display: inline-flex;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgb(15 23 42 / 0.14);
+    border-radius: 8px;
+    background: rgb(255 255 255 / 0.74);
+    color: #004329;
+    cursor: pointer;
+    transition:
+      background-color 180ms ease,
+      border-color 180ms ease,
+      color 180ms ease,
+      opacity 180ms ease,
+      transform 180ms ease;
+  }
+
+  .news-section__arrow:hover {
+    border-color: rgb(29 78 216 / 0.28);
+    background: #eff6ff;
+    color: #1d4ed8;
+  }
+
+  .news-section__arrow:active {
+    transform: translateY(1px);
+  }
+
+  .news-section__arrow:disabled {
+    cursor: default;
+    opacity: 0.38;
+    transform: none;
+  }
+
+  .news-section__arrow--prev :global(svg) {
+    transform: rotate(180deg);
+  }
+
+  .news-section__viewport {
+    overflow: hidden;
+    cursor: grab;
+    touch-action: pan-y;
+  }
+
+  .news-section__viewport.is-dragging {
+    cursor: grabbing;
+  }
+
+  .news-section__viewport.is-dragging .news-section__slide {
+    user-select: none;
+  }
+
+  .news-section__viewport.is-dragging :global(.news-card),
+  .news-section__viewport.is-dragging :global(.news-card__media img) {
+    transform: none !important;
+  }
+
+  .news-section__viewport.is-dragging .news-section__track {
+    transition: none;
+  }
+
+  .news-section__viewport.is-dragging :global(a),
+  .news-section__viewport.is-dragging :global(button) {
+    pointer-events: none;
+  }
+
+  .news-section__track {
+    display: flex;
+    gap: var(--news-gap);
+    align-items: stretch;
+    padding-bottom: 8px;
+    transform: translate3d(var(--news-translate, 0px), 0, 0);
+    transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+
+  .news-section__slide {
+    flex: 0 0 calc((100% - (var(--news-gap) * 2)) / 3);
+    min-width: 0;
   }
 
   .news-section__all {
@@ -79,13 +172,21 @@ const latestNews = getLatestNews(3);
     color: #f8fafc;
   }
 
-  :global(html[data-theme='dark']) .news-section__eyebrow {
-    color: #93c5fd;
+  :global(html[data-theme='dark']) .news-section__arrow {
+    border-color: rgb(148 163 184 / 0.22);
+    background: rgb(15 23 42 / 0.62);
+    color: #f8fafc;
+  }
+
+  :global(html[data-theme='dark']) .news-section__arrow:hover {
+    border-color: rgb(96 165 250 / 0.38);
+    background: rgb(30 41 59 / 0.88);
+    color: #bfdbfe;
   }
 
   @media (max-width: 900px) {
-    .news-section__grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .news-section__slide {
+      flex-basis: calc((100% - var(--news-gap)) / 2);
     }
   }
 
@@ -97,15 +198,223 @@ const latestNews = getLatestNews(3);
     }
 
     .news-section__header h2 {
-      font-size: clamp(2.1rem, 13vw, 3.25rem);
+      font-size: clamp(2.1rem, 12vw, 3.25rem);
     }
 
-    .news-section__grid {
-      grid-template-columns: 1fr;
+    .news-section__actions {
+      flex-wrap: wrap;
+    }
+
+    .news-section__slide {
+      flex-basis: 100%;
     }
 
     .news-section__all {
       align-self: flex-start;
     }
   }
+
+  @media (min-width: 640px) {
+    .news-section__header h2 {
+      font-size: 3.25rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .news-section__header h2 {
+      font-size: 4.7rem;
+    }
+  }
 </style>
+
+<script>
+  const carousels = document.querySelectorAll<HTMLElement>('[data-news-carousel]');
+
+  carousels.forEach((carousel) => {
+    const viewport = carousel.querySelector<HTMLElement>('[data-news-viewport]');
+    const track = carousel.querySelector<HTMLElement>('[data-news-track]');
+    const prevButton = carousel.querySelector<HTMLButtonElement>('[data-news-prev]');
+    const nextButton = carousel.querySelector<HTMLButtonElement>('[data-news-next]');
+    const slides = Array.from(carousel.querySelectorAll<HTMLElement>('.news-section__slide'));
+
+    if (!viewport || !track || !prevButton || !nextButton || slides.length === 0) return;
+
+    let currentIndex = 0;
+    let isPointerDown = false;
+    let startX = 0;
+    let startTranslate = 0;
+    let currentTranslate = 0;
+    let targetTranslate = 0;
+    let didDrag = false;
+    let preventClick = false;
+    let dragFrame = 0;
+    let pointerId: number | null = null;
+
+    const getGap = () => {
+      const styles = window.getComputedStyle(track);
+      return Number.parseFloat(styles.columnGap || styles.gap || '0') || 0;
+    };
+
+    const getStep = () => {
+      const slideWidth = slides[0]?.getBoundingClientRect().width || viewport.clientWidth;
+      return slideWidth + getGap();
+    };
+
+    const getVisibleCount = () => {
+      const step = getStep();
+      return Math.max(1, Math.round((viewport.clientWidth + getGap()) / step));
+    };
+
+    const getMaxIndex = () => Math.max(0, slides.length - getVisibleCount());
+
+    const clampIndex = (index: number) => Math.max(0, Math.min(index, getMaxIndex()));
+
+    const getTranslateForIndex = (index: number) => -clampIndex(index) * getStep();
+
+    const getMinTranslate = () => getTranslateForIndex(getMaxIndex());
+
+    const getResistedTranslate = (value: number) => {
+      const minTranslate = getMinTranslate();
+
+      if (value > 0) return value * 0.24;
+      if (value < minTranslate) return minTranslate + (value - minTranslate) * 0.24;
+
+      return value;
+    };
+
+    const setTranslate = (value: number) => {
+      currentTranslate = value;
+      track.style.setProperty('--news-translate', `${value}px`);
+    };
+
+    const requestTranslate = (value: number) => {
+      targetTranslate = value;
+
+      if (dragFrame) return;
+
+      dragFrame = window.requestAnimationFrame(() => {
+        setTranslate(targetTranslate);
+        dragFrame = 0;
+      });
+    };
+
+    const updateControls = () => {
+      const maxIndex = getMaxIndex();
+      prevButton.disabled = currentIndex <= 0;
+      nextButton.disabled = currentIndex >= maxIndex;
+      carousel.toggleAttribute('data-news-single-page', maxIndex === 0);
+    };
+
+    const goToIndex = (index: number) => {
+      currentIndex = clampIndex(index);
+      setTranslate(getTranslateForIndex(currentIndex));
+      updateControls();
+    };
+
+    prevButton.addEventListener('click', () => {
+      goToIndex(currentIndex - 1);
+    });
+
+    nextButton.addEventListener('click', () => {
+      goToIndex(currentIndex + 1);
+    });
+
+    viewport.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0) return;
+
+      isPointerDown = true;
+      didDrag = false;
+      preventClick = false;
+      pointerId = event.pointerId;
+      startX = event.clientX;
+      startTranslate = currentTranslate;
+      targetTranslate = currentTranslate;
+      viewport.classList.add('is-dragging');
+      viewport.setPointerCapture(event.pointerId);
+    });
+
+    viewport.addEventListener('pointermove', (event) => {
+      if (!isPointerDown) return;
+
+      const distance = event.clientX - startX;
+      if (Math.abs(distance) <= 6 && !didDrag) return;
+
+      didDrag = true;
+      event.preventDefault();
+      requestTranslate(getResistedTranslate(startTranslate + distance));
+    });
+
+    const endDrag = (event?: PointerEvent) => {
+      if (!isPointerDown) return;
+
+      isPointerDown = false;
+      viewport.classList.remove('is-dragging');
+
+      if (dragFrame) {
+        window.cancelAnimationFrame(dragFrame);
+        dragFrame = 0;
+        setTranslate(targetTranslate);
+      }
+
+      if (didDrag) {
+        const step = getStep();
+        const delta = currentTranslate - startTranslate;
+        const threshold = Math.max(36, step * 0.16);
+        const roundedIndex = Math.round(-currentTranslate / step);
+        const directionalIndex = currentIndex + (delta < 0 ? 1 : -1);
+        const nextIndex =
+          Math.abs(delta) > threshold
+            ? roundedIndex === currentIndex
+              ? directionalIndex
+              : roundedIndex
+            : currentIndex;
+
+        preventClick = true;
+        window.setTimeout(() => {
+          preventClick = false;
+        }, 250);
+
+        goToIndex(nextIndex);
+      } else {
+        goToIndex(currentIndex);
+      }
+
+      if (event && pointerId !== null && viewport.hasPointerCapture(pointerId)) {
+        viewport.releasePointerCapture(pointerId);
+      }
+
+      pointerId = null;
+    };
+
+    viewport.addEventListener('pointerup', endDrag);
+    viewport.addEventListener('pointercancel', endDrag);
+    viewport.addEventListener('lostpointercapture', () => endDrag());
+
+    viewport.addEventListener(
+      'click',
+      (event) => {
+        if (!preventClick) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        preventClick = false;
+      },
+      true,
+    );
+
+    viewport.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        goToIndex(currentIndex - 1);
+      }
+
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        goToIndex(currentIndex + 1);
+      }
+    });
+
+    window.addEventListener('resize', () => goToIndex(currentIndex));
+    goToIndex(0);
+  });
+</script>
