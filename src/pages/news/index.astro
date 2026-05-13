@@ -6,7 +6,9 @@ import Container from '../../components/ui/Container.astro';
 import Button from '../../components/ui/Button.astro';
 import Icon from '../../components/ui/Icon.astro';
 import NewsCard from '../../components/news/NewsCard.astro';
-import { news } from '../../data/news';
+import { getPublishedNews } from '../../lib/server/newsStore';
+
+const news = await getPublishedNews();
 ---
 
 <BaseLayout

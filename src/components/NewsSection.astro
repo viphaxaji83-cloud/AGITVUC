@@ -3,7 +3,9 @@ import Container from './ui/Container.astro';
 import Button from './ui/Button.astro';
 import Icon from './ui/Icon.astro';
 import NewsCard from './news/NewsCard.astro';
-import { news } from '../data/news';
+import { getPublishedNews } from '../lib/server/newsStore';
+
+const news = await getPublishedNews();
 ---
 
 <section id="news" class="news-section section anchor-offset" data-news-carousel>

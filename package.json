@@ -7,10 +7,13 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
+    "start:prod": "node ./dist/server/entry.mjs",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "hash:admin-password": "node scripts/hash-admin-password.mjs"
   },
   "dependencies": {
+    "@astrojs/node": "^8.3.4",
     "@astrojs/sitemap": "^3.1.6",
     "@astrojs/tailwind": "^5.1.4",
     "astro": "^4.16.18",
