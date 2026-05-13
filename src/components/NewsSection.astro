@@ -1,0 +1,111 @@
+---
+import Container from './ui/Container.astro';
+import Button from './ui/Button.astro';
+import Icon from './ui/Icon.astro';
+import NewsCard from './news/NewsCard.astro';
+import { getLatestNews } from '../data/news';
+
+const latestNews = getLatestNews(3);
+---
+
+<section id="news" class="news-section section anchor-offset">
+  <Container class="!max-w-[1320px]">
+    <div class="news-section__header">
+      <div>
+        <p class="news-section__eyebrow">Новости</p>
+        <h2>Последние новости</h2>
+      </div>
+
+      <Button href="/news" variant="secondary" class="news-section__all">
+        Все новости
+        <Icon name="arrow-right" size={18} />
+      </Button>
+    </div>
+
+    <div class="news-section__grid">
+      {
+        latestNews.map((item, index) => (
+          <NewsCard news={item} priority={index === 0} />
+        ))
+      }
+    </div>
+  </Container>
+</section>
+
+<style>
+  .news-section {
+    color: #004329;
+  }
+
+  .news-section__header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: clamp(24px, 3vw, 38px);
+  }
+
+  .news-section__eyebrow {
+    margin: 0 0 8px;
+    color: #b80008;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .news-section__header h2 {
+    margin: 0;
+    color: #004329;
+    font-size: clamp(2.4rem, 5.5vw, 5.7rem);
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 0.94;
+    text-transform: uppercase;
+  }
+
+  .news-section__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(16px, 2vw, 24px);
+  }
+
+  .news-section__all {
+    flex: 0 0 auto;
+  }
+
+  :global(html[data-theme='dark']) .news-section__header h2 {
+    color: #f8fafc;
+  }
+
+  :global(html[data-theme='dark']) .news-section__eyebrow {
+    color: #93c5fd;
+  }
+
+  @media (max-width: 900px) {
+    .news-section__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .news-section__header {
+      align-items: stretch;
+      flex-direction: column;
+      margin-bottom: 22px;
+    }
+
+    .news-section__header h2 {
+      font-size: clamp(2.1rem, 13vw, 3.25rem);
+    }
+
+    .news-section__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .news-section__all {
+      align-self: flex-start;
+    }
+  }
+</style>

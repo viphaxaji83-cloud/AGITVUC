@@ -5,6 +5,9 @@ import { site } from '../data/site';
 import { contacts } from '../data/contacts';
 
 const year = new Date().getFullYear();
+const isHomePage = Astro.url.pathname === '/';
+const getFooterHref = (href: string) =>
+  href.startsWith('#') && !isHomePage ? `/${href}` : href;
 ---
 
 <footer class="site-footer mt-auto border-t border-ink-200 bg-white">
@@ -17,7 +20,7 @@ const year = new Date().getFullYear();
           {
             site.nav.map((item) => (
               <li>
-                <a href={item.href}>{item.label}</a>
+                <a href={getFooterHref(item.href)}>{item.label}</a>
               </li>
             ))
           }

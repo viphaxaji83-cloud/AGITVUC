@@ -3,6 +3,11 @@ import Container from './ui/Container.astro';
 import Button from './ui/Button.astro';
 import Icon from './ui/Icon.astro';
 import { site } from '../data/site';
+
+const isHomePage = Astro.url.pathname === '/';
+const getHeaderHref = (href: string) =>
+  href.startsWith('#') && !isHomePage ? `/${href}` : href;
+const contactHref = isHomePage ? '#contacts' : '/#contacts';
 ---
 
 <header class="sticky top-0 z-40 border-b border-ink-200/70 bg-white/85 backdrop-blur-md">
@@ -39,7 +44,7 @@ import { site } from '../data/site';
       {
         site.nav.map((item) => (
           <a
-            href={item.href}
+            href={getHeaderHref(item.href)}
             class="whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-ink-700 hover:text-brand-800 hover:bg-brand-50 transition-colors"
           >
             {item.label}
@@ -49,7 +54,7 @@ import { site } from '../data/site';
     </nav>
 
     <div class="hidden lg:flex items-center gap-2">
-      <Button href="#contacts" variant="primary" size="sm" class="whitespace-nowrap">
+      <Button href={contactHref} variant="primary" size="sm" class="whitespace-nowrap">
         Получить консультацию
       </Button>
       <button
@@ -113,7 +118,7 @@ import { site } from '../data/site';
         {
           site.nav.map((item) => (
             <a
-              href={item.href}
+              href={getHeaderHref(item.href)}
               class="rounded-lg px-3 py-3 text-base font-medium text-ink-800 hover:bg-brand-50 hover:text-brand-800"
               data-mobile-link
             >
@@ -123,7 +128,7 @@ import { site } from '../data/site';
         }
       </nav>
       <div class="mt-4">
-        <Button href="#contacts" variant="primary" fullWidth>
+        <Button href={contactHref} variant="primary" fullWidth>
           Получить консультацию
         </Button>
       </div>
