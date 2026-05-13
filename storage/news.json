@@ -1,1 +1,29 @@
-[]
+[
+  {
+    "id": "8e05c2cb-7c91-47b7-a46a-b77aa3c877b2",
+    "title": "Тестовая новость",
+    "slug": "177047609527",
+    "date": "2026-05-13",
+    "image": "/uploads/news/1778677822410-d7fa2061-chrome-yb9sxs7evs.gif",
+    "imageAlt": "chrome_yB9sxs7evS",
+    "images": [
+      {
+        "src": "/uploads/news/1778677822410-d7fa2061-chrome-yb9sxs7evs.gif",
+        "alt": "chrome_yB9sxs7evS"
+      },
+      {
+        "src": "/uploads/news/1778677825768-666b8c8a-chrome-xymognkdhx.png",
+        "alt": "chrome_xYmoGNkdHX"
+      },
+      {
+        "src": "/uploads/news/1778677831176-0d1a5dff-chatgpt-image-22-2026-11-00-47.png",
+        "alt": "ChatGPT Image 22 апр. 2026 г., 11_00_47последвухапскейлеров"
+      }
+    ],
+    "excerpt": "Тестовый текст для отображения описания",
+    "content": "Тестовый текст для отображения полного текста",
+    "isPublished": true,
+    "createdAt": "2026-05-13T13:10:34.183Z",
+    "updatedAt": "2026-05-13T13:10:34.183Z"
+  }
+]

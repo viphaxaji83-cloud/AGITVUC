@@ -427,6 +427,10 @@ const benefitSlides = [
     font-weight: 800;
     line-height: 1.2;
     backface-visibility: hidden;
+    opacity: 1;
+    transition:
+      opacity 180ms ease,
+      visibility 180ms ease;
     transform: translateZ(0);
   }
 
@@ -440,6 +444,10 @@ const benefitSlides = [
     line-height: 1.2;
     backface-visibility: hidden;
     overflow-wrap: anywhere;
+    opacity: 1;
+    transition:
+      opacity 180ms ease,
+      visibility 180ms ease;
     transform: translateZ(0);
   }
 
@@ -453,7 +461,17 @@ const benefitSlides = [
     line-height: 1.08;
     backface-visibility: hidden;
     overflow-wrap: anywhere;
+    opacity: 1;
+    transition:
+      opacity 180ms ease,
+      visibility 180ms ease;
     transform: translateZ(0);
+  }
+
+  .benefit-slide:not([data-position='active']) .benefit-slide__eyebrow,
+  .benefit-slide:not([data-position='active']) .benefit-slide__title {
+    visibility: hidden;
+    opacity: 0;
   }
 
   .benefits-statement {

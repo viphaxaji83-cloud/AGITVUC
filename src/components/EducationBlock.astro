@@ -5,6 +5,11 @@ const advantages = [
   {
     title: 'До 3 000 000 рублей',
     description: 'Единовременная выплата',
+    note: [
+      '400 тыс. рублей - федеральная выплата',
+      '2 100 000 рублей - региональная выплата',
+      'до 500 000 рублей - муниципальная выплата',
+    ],
   },
   {
     title: 'От 230 000 рублей',
@@ -41,6 +46,15 @@ const advantages = [
           <article class="advantages-card">
             <h3>{item.title}</h3>
             <p>{item.description}</p>
+            {
+              'note' in item && (
+                <ul class="advantages-card__note">
+                  {item.note.map((note) => (
+                    <li>{note}</li>
+                  ))}
+                </ul>
+              )
+            }
           </article>
         ))
       }
@@ -190,6 +204,22 @@ const advantages = [
     line-height: 1.35;
   }
 
+  .advantages-card__note {
+    display: grid;
+    gap: 2px;
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+    color: rgb(15 23 42 / 0.62);
+    font-size: 0.58rem;
+    font-weight: 300;
+    line-height: 1.14;
+  }
+
+  .advantages-card__note li {
+    margin: 0;
+  }
+
   @media (min-width: 640px) {
     .advantages-section__header h2 {
       font-size: 3.25rem;
@@ -207,6 +237,10 @@ const advantages = [
 
     .advantages-card p {
       font-size: 0.9rem;
+    }
+
+    .advantages-card__note {
+      font-size: 0.6rem;
     }
   }
 

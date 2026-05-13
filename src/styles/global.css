@@ -592,6 +592,10 @@ html[data-theme='dark'] .conditions-card p {
   color: #f8fafc !important;
 }
 
+html[data-theme='dark'] .advantages-card__note {
+  color: rgb(226 232 240 / 0.74) !important;
+}
+
 html[data-theme='dark'] .conditions-card__icon {
   border-color: rgb(148 163 184 / 0.24);
   background: rgb(15 23 42 / 0.78);
