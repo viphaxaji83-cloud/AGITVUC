@@ -1,14 +1,15 @@
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import {
   NEWS_PLACEHOLDER_IMAGE,
   sortNewsByDate,
   type NewsDraft,
+  type NewsImage,
   type NewsItem,
 } from '../news';
 
-const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const slugPattern = /^\d{6,20}$/;
 const storagePath = process.env.NEWS_STORAGE_PATH
   ? path.resolve(process.env.NEWS_STORAGE_PATH)
   : path.resolve(process.cwd(), 'storage/news.json');
@@ -53,8 +54,81 @@ const normalizeImage = (value: string) => {
   return NEWS_PLACEHOLDER_IMAGE;
 };
 
+const normalizeNewsImages = (source: any, fallbackTitle: string): NewsImage[] => {
+  const rawImages: unknown[] = Array.isArray(source.images) ? source.images : [];
+  const normalized = rawImages
+    .map((item: unknown): NewsImage | null => {
+      const imageData =
+        typeof item === 'object' && item !== null
+          ? (item as Record<string, unknown>)
+          : {};
+      const src =
+        typeof item === 'string'
+          ? normalizeImage(toCleanString(item, 1000))
+          : normalizeImage(
+              toCleanString(imageData.src ?? imageData.image ?? imageData.url, 1000),
+            );
+      const alt =
+        typeof item === 'string'
+          ? fallbackTitle
+          : toCleanString(imageData.alt, 240) || fallbackTitle;
+
+      if (!src) return null;
+
+      return { src, alt };
+    })
+    .filter((item): item is NewsImage => Boolean(item));
+
+  if (normalized.length > 0) return normalized.slice(0, 12);
+
+  const legacyImage = normalizeImage(toCleanString(source.image, 1000));
+  const legacyAlt = toCleanString(source.imageAlt, 240) || fallbackTitle;
+
+  return [
+    {
+      src: legacyImage,
+      alt: legacyAlt,
+    },
+  ];
+};
+
+const createNumericSlugBase = (title: string) => {
+  const digest = createHash('sha256')
+    .update(title.trim().toLowerCase() || 'news')
+    .digest('hex');
+  const value = Number.parseInt(digest.slice(0, 13), 16) % 1_000_000_000_000;
+
+  return String(value).padStart(12, '0');
+};
+
+const createUniqueSlug = (
+  title: string,
+  existingItems: NewsItem[],
+  editingId?: string,
+) => {
+  const base = createNumericSlugBase(title);
+  let slug = base;
+  let counter = 2;
+
+  while (
+    existingItems.some((item) => item.slug === slug && item.id !== editingId)
+  ) {
+    const suffix = String(counter).padStart(2, '0');
+    slug =
+      suffix.length < base.length
+        ? `${base.slice(0, -suffix.length)}${suffix}`
+        : createNumericSlugBase(`${title}-${counter}`);
+    counter += 1;
+  }
+
+  return slug;
+};
+
 const normalizeNewsItem = (item: any, fallbackId?: string): NewsItem => {
   const now = new Date().toISOString();
+  const title = toCleanString(item.title, 220);
+  const images = normalizeNewsImages(item, title);
+  const primaryImage = images[0];
   const content = Array.isArray(item.content)
     ? item.content.join('\n\n')
     : String(item.content ?? '');
@@ -62,10 +136,11 @@ const normalizeNewsItem = (item: any, fallbackId?: string): NewsItem => {
   return {
     id: String(item.id ?? fallbackId ?? randomUUID()),
     slug: toCleanString(item.slug, 140).toLowerCase(),
-    title: toCleanString(item.title, 220),
+    title,
     date: toCleanString(item.date, 20),
-    image: normalizeImage(toCleanString(item.image, 1000)),
-    imageAlt: toCleanString(item.imageAlt, 240),
+    image: primaryImage.src,
+    imageAlt: primaryImage.alt,
+    images,
     excerpt: toCleanString(item.excerpt, 600),
     content: toCleanString(content, 30000),
     isPublished: item.isPublished !== false,
@@ -110,15 +185,25 @@ const writeNews = async (items: NewsItem[]) => {
 const validateNewsPayload = (
   payload: unknown,
   existingItems: NewsItem[],
-  editingId?: string,
+  currentItem?: NewsItem,
 ): NewsDraft => {
   const source = payload && typeof payload === 'object' ? (payload as any) : {};
+  const title = toCleanString(source.title, 220);
+  const images = normalizeNewsImages(source, title);
+  const primaryImage = images[0];
+  const manualSlug = toCleanString(source.slug, 140).toLowerCase();
+  const currentSlug = currentItem?.slug
+    ? toCleanString(currentItem.slug, 140).toLowerCase()
+    : '';
+  const slug =
+    manualSlug || currentSlug || createUniqueSlug(title, existingItems, currentItem?.id);
   const draft: NewsDraft = {
-    title: toCleanString(source.title, 220),
-    slug: toCleanString(source.slug, 140).toLowerCase(),
+    title,
+    slug,
     date: toCleanString(source.date, 20),
-    image: normalizeImage(toCleanString(source.image, 1000)),
-    imageAlt: toCleanString(source.imageAlt, 240),
+    image: primaryImage.src,
+    imageAlt: primaryImage.alt,
+    images,
     excerpt: toCleanString(source.excerpt, 600),
     content: toCleanString(source.content, 30000),
     isPublished: Boolean(source.isPublished),
@@ -126,13 +211,12 @@ const validateNewsPayload = (
   const errors: Record<string, string> = {};
 
   if (!draft.title) errors.title = 'Укажите заголовок';
-  if (!draft.slug) errors.slug = 'Укажите slug';
-  if (draft.slug && !slugPattern.test(draft.slug)) {
-    errors.slug = 'Slug должен содержать латиницу, цифры и дефисы';
+  if (manualSlug && !slugPattern.test(manualSlug)) {
+    errors.slug = 'Slug должен содержать только цифры';
   }
   if (
     draft.slug &&
-    existingItems.some((item) => item.slug === draft.slug && item.id !== editingId)
+    existingItems.some((item) => item.slug === draft.slug && item.id !== currentItem?.id)
   ) {
     errors.slug = 'Такой slug уже используется';
   }
@@ -182,7 +266,7 @@ export const updateNews = async (id: string, payload: unknown) => {
 
   if (!current) return null;
 
-  const draft = validateNewsPayload(payload, items, id);
+  const draft = validateNewsPayload(payload, items, current);
   const updated: NewsItem = {
     ...current,
     ...draft,

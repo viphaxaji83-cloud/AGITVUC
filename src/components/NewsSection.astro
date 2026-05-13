@@ -146,11 +146,6 @@ const news = await getPublishedNews();
     transition: none;
   }
 
-  .news-section__viewport.is-dragging :global(a),
-  .news-section__viewport.is-dragging :global(button) {
-    pointer-events: none;
-  }
-
   .news-section__track {
     display: flex;
     gap: var(--news-gap);
@@ -323,6 +318,9 @@ const news = await getPublishedNews();
 
     viewport.addEventListener('pointerdown', (event) => {
       if (event.button !== 0) return;
+
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('a, button')) return;
 
       isPointerDown = true;
       didDrag = false;

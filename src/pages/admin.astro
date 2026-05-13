@@ -64,7 +64,6 @@ const configured = isAuthConfigured();
         <div class="admin-app" data-admin-app>
           <div class="admin-app__header">
             <div>
-              <p class="admin-eyebrow">Новости</p>
               <h1>Админ-панель</h1>
             </div>
             <div class="admin-app__actions">
@@ -100,21 +99,6 @@ const configured = isAuthConfigured();
                   <input name="title" type="text" maxlength="220" required />
                 </label>
 
-                <label>
-                  <span>Slug *</span>
-                  <input
-                    name="slug"
-                    type="text"
-                    pattern="[a-z0-9]+(-[a-z0-9]+)*"
-                    maxlength="140"
-                    required
-                  />
-                  <small>
-                    Латиница, цифры и дефисы. При изменении slug старая ссылка перестанет
-                    открываться.
-                  </small>
-                </label>
-
                 <div class="admin-form__grid">
                   <label>
                     <span>Дата публикации *</span>
@@ -129,15 +113,34 @@ const configured = isAuthConfigured();
                   </label>
                 </div>
 
-                <label>
-                  <span>URL изображения</span>
-                  <input name="image" type="text" placeholder="/images/news/news-1.svg" />
-                </label>
+                <div
+                  class="admin-upload"
+                  data-upload-zone
+                >
+                  <input
+                    class="admin-upload__input"
+                    data-upload-input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    multiple
+                  />
+                  <input type="hidden" name="images" data-images-value />
+                  <div class="admin-upload__text">
+                    <span>Изображения</span>
+                    <p>Перетащите картинки сюда или прикрепите через скрепку</p>
+                    <small>JPG, PNG, WEBP, GIF до 20 МБ. Первая картинка будет главной.</small>
+                  </div>
+                  <button class="admin-upload__button" type="button" data-upload-button>
+                    <Icon name="paperclip" size={17} />
+                    Прикрепить
+                  </button>
+                </div>
 
-                <label>
-                  <span>Alt изображения</span>
-                  <input name="imageAlt" type="text" maxlength="240" />
-                </label>
+                <div
+                  class="admin-upload-preview"
+                  data-upload-preview
+                  aria-live="polite"
+                ></div>
 
                 <label>
                   <span>Короткое описание *</span>
@@ -190,12 +193,14 @@ const configured = isAuthConfigured();
 
   .admin-page {
     min-height: 100svh;
-    padding: clamp(18px, 3vw, 34px);
+    padding: clamp(14px, 2.4vw, 28px);
     color: #0f172a;
+    font-size: 0.84rem;
+    font-weight: 500;
   }
 
   .admin-panel {
-    width: min(1180px, 100%);
+    width: min(1680px, 100%);
     margin: 0 auto;
   }
 
@@ -204,12 +209,12 @@ const configured = isAuthConfigured();
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    margin-bottom: clamp(22px, 3vw, 34px);
+    margin-bottom: clamp(16px, 2.2vw, 26px);
   }
 
   .admin-panel__logo {
     display: inline-flex;
-    width: 126px;
+    width: 102px;
   }
 
   .admin-panel__logo img {
@@ -219,16 +224,17 @@ const configured = isAuthConfigured();
   }
 
   .admin-panel__site-link,
-  .admin-secondary,
-  .admin-primary {
+  :global(.admin-secondary),
+  :global(.admin-primary) {
     display: inline-flex;
-    min-height: 42px;
+    min-height: 32px;
     align-items: center;
     justify-content: center;
     gap: 8px;
     border-radius: 8px;
-    padding: 0 18px;
-    font-weight: 700;
+    padding: 0 12px;
+    font-size: 0.84rem;
+    font-weight: 500;
     text-decoration: none;
     transition:
       background-color 180ms ease,
@@ -238,26 +244,26 @@ const configured = isAuthConfigured();
   }
 
   .admin-panel__site-link,
-  .admin-secondary {
+  :global(.admin-secondary) {
     border: 1px solid rgb(15 23 42 / 0.14);
     background: rgb(255 255 255 / 0.76);
     color: #1e3a8a;
   }
 
-  .admin-primary {
+  :global(.admin-primary) {
     border: 1px solid #1d4ed8;
     background: #1d4ed8;
     color: #fff;
   }
 
-  .admin-primary:disabled {
+  :global(.admin-primary:disabled) {
     cursor: not-allowed;
     opacity: 0.55;
   }
 
   .admin-panel__site-link:hover,
-  .admin-secondary:hover,
-  .admin-primary:hover:not(:disabled) {
+  :global(.admin-secondary:hover),
+  :global(.admin-primary:hover:not(:disabled)) {
     transform: translateY(-1px);
   }
 
@@ -273,15 +279,15 @@ const configured = isAuthConfigured();
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
     gap: clamp(24px, 4vw, 56px);
-    padding: clamp(24px, 5vw, 64px);
+    padding: clamp(20px, 3.8vw, 50px);
   }
 
   .admin-login__copy h1,
   .admin-app__header h1 {
     margin: 0;
     color: #004329;
-    font-size: clamp(2.4rem, 6vw, 5.4rem);
-    font-weight: 800;
+    font-size: clamp(1.8rem, 4.3vw, 3.9rem);
+    font-weight: 700;
     line-height: 0.94;
     text-transform: uppercase;
   }
@@ -290,15 +296,15 @@ const configured = isAuthConfigured();
     max-width: 540px;
     margin: 18px 0 0;
     color: rgb(15 23 42 / 0.72);
-    font-size: 1.05rem;
+    font-size: 0.88rem;
     line-height: 1.55;
   }
 
   .admin-eyebrow {
     margin: 0 0 8px;
     color: #64748b;
-    font-size: 0.78rem;
-    font-weight: 800;
+    font-size: 0.64rem;
+    font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
   }
@@ -310,7 +316,7 @@ const configured = isAuthConfigured();
   }
 
   .admin-app {
-    padding: clamp(18px, 3vw, 34px);
+    padding: clamp(16px, 2.4vw, 28px);
   }
 
   .admin-app__header,
@@ -329,51 +335,65 @@ const configured = isAuthConfigured();
     flex-wrap: wrap;
   }
 
+  .admin-app__actions :global(a) {
+    min-height: 32px;
+    border-radius: 8px;
+    padding: 0 12px;
+    font-size: 0.84rem;
+    font-weight: 500;
+  }
+
   .admin-layout {
     display: grid;
-    grid-template-columns: minmax(360px, 0.9fr) minmax(0, 1.1fr);
-    gap: 18px;
-    margin-top: 22px;
+    grid-template-columns: minmax(0, 1.45fr) minmax(360px, 0.75fr);
+    align-items: start;
+    gap: clamp(14px, 1.7vw, 24px);
+    margin-top: 18px;
   }
 
   .admin-card {
     border: 1px solid rgb(15 23 42 / 0.12);
     border-radius: 10px;
     background: #fff;
-    padding: clamp(16px, 2vw, 22px);
+    padding: clamp(14px, 1.6vw, 18px);
+  }
+
+  .admin-card--form,
+  .admin-card--list {
+    min-width: 0;
   }
 
   .admin-card__head {
-    margin-bottom: 18px;
+    margin-bottom: 14px;
   }
 
   .admin-card__head h2 {
     margin: 0;
     color: #004329;
-    font-size: 1.45rem;
-    font-weight: 700;
+    font-size: 1.1rem;
+    font-weight: 500;
     line-height: 1.1;
   }
 
   .admin-form {
     display: grid;
-    gap: 14px;
+    gap: 10px;
   }
 
   .admin-form label {
     display: grid;
-    gap: 7px;
+    gap: 6px;
   }
 
   .admin-form span {
     color: #004329;
-    font-size: 0.9rem;
-    font-weight: 700;
+    font-size: 0.76rem;
+    font-weight: 500;
   }
 
   .admin-form small {
     color: #64748b;
-    font-size: 0.78rem;
+    font-size: 0.66rem;
     line-height: 1.35;
   }
 
@@ -386,7 +406,7 @@ const configured = isAuthConfigured();
     background: #fff;
     color: #0f172a;
     font: inherit;
-    padding: 12px 14px;
+    padding: 8px 10px;
     outline: none;
     transition:
       border-color 160ms ease,
@@ -407,14 +427,117 @@ const configured = isAuthConfigured();
   .admin-form__grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .admin-upload {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
     gap: 12px;
+    border: 1px dashed rgb(15 23 42 / 0.22);
+    border-radius: 10px;
+    background: rgb(248 250 252 / 0.76);
+    padding: 14px;
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .admin-upload.is-dragover {
+    border-color: rgb(29 78 216 / 0.72);
+    background: rgb(29 78 216 / 0.05);
+    box-shadow: 0 0 0 3px rgb(29 78 216 / 0.12);
+  }
+
+  .admin-upload__input {
+    position: absolute;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .admin-upload__text {
+    display: grid;
+    gap: 3px;
+  }
+
+  .admin-upload__text p,
+  .admin-upload__text small {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.72rem;
+    line-height: 1.35;
+  }
+
+  .admin-upload__button {
+    display: inline-flex;
+    min-height: 32px;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 1px solid rgb(15 23 42 / 0.14);
+    border-radius: 8px;
+    background: #fff;
+    color: #1e3a8a;
+    font: inherit;
+    font-weight: 500;
+    padding: 0 12px;
+    cursor: pointer;
+  }
+
+  .admin-upload-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    gap: 9px;
+  }
+
+  .admin-upload-preview:empty {
+    display: none;
+  }
+
+  :global(.admin-upload-thumb) {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    border: 1px solid rgb(15 23 42 / 0.12);
+    border-radius: 8px;
+    background: #e2e8f0;
+  }
+
+  :global(.admin-upload-thumb img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  :global(.admin-upload-thumb__remove) {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: inline-flex;
+    width: 24px;
+    height: 24px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgb(15 23 42 / 0.14);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.92);
+    color: #b80008;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
   }
 
   .admin-message {
     min-height: 1.4em;
-    margin: 14px 0 0;
+    margin: 10px 0 0;
     color: #b80008;
-    font-weight: 700;
+    font-weight: 500;
   }
 
   .admin-message[data-tone='success'] {
@@ -423,66 +546,66 @@ const configured = isAuthConfigured();
 
   .admin-news-list {
     display: grid;
-    max-height: 720px;
-    gap: 12px;
+    max-height: 560px;
+    gap: 10px;
     overflow: auto;
     padding-right: 4px;
   }
 
-  .admin-news-item {
+  :global(.admin-news-item) {
     display: grid;
-    gap: 10px;
+    gap: 8px;
     border: 1px solid rgb(15 23 42 / 0.12);
     border-radius: 8px;
-    padding: 14px;
+    padding: 12px;
   }
 
-  .admin-news-item__meta,
-  .admin-news-item__actions {
+  :global(.admin-news-item__meta),
+  :global(.admin-news-item__actions) {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
   }
 
-  .admin-news-item__date,
-  .admin-news-item__status,
+  :global(.admin-news-item__date),
+  :global(.admin-news-item__status),
   .admin-count {
     color: #64748b;
-    font-size: 0.78rem;
-    font-weight: 700;
+    font-size: 0.66rem;
+    font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
-  .admin-news-item__status.is-draft {
+  :global(.admin-news-item__status.is-draft) {
     color: #b80008;
   }
 
-  .admin-news-item h3 {
+  :global(.admin-news-item h3) {
     margin: 0;
     color: #004329;
-    font-size: 1.05rem;
-    font-weight: 700;
+    font-size: 0.88rem;
+    font-weight: 500;
     line-height: 1.25;
   }
 
-  .admin-news-item p {
+  :global(.admin-news-item p) {
     margin: 0;
     color: rgb(15 23 42 / 0.68);
-    font-size: 0.92rem;
+    font-size: 0.78rem;
     line-height: 1.45;
   }
 
-  .admin-news-item__actions {
+  :global(.admin-news-item__actions) {
     justify-content: flex-start;
   }
 
-  .admin-danger {
+  :global(.admin-danger) {
     color: #b80008;
   }
 
-  .admin-muted {
+  :global(.admin-muted) {
     margin: 0;
     color: #64748b;
   }
@@ -501,12 +624,12 @@ const configured = isAuthConfigured();
 
   @media (max-width: 640px) {
     .admin-page {
-      padding: 14px;
+      padding: 12px;
     }
 
     .admin-login__copy h1,
     .admin-app__header h1 {
-      font-size: clamp(2rem, 14vw, 3.2rem);
+      font-size: clamp(1.8rem, 12vw, 2.7rem);
     }
 
     .admin-card__head,
@@ -517,6 +640,14 @@ const configured = isAuthConfigured();
     .admin-card__head {
       align-items: flex-start;
       flex-direction: column;
+    }
+
+    .admin-upload {
+      grid-template-columns: 1fr;
+    }
+
+    .admin-upload__button {
+      width: 100%;
     }
   }
 </style>
@@ -534,8 +665,14 @@ const configured = isAuthConfigured();
   const newButton = document.querySelector<HTMLButtonElement>('[data-new-news]');
   const cancelButton = document.querySelector<HTMLButtonElement>('[data-cancel-edit]');
   const logoutButton = document.querySelector<HTMLButtonElement>('[data-logout]');
+  const uploadZone = document.querySelector<HTMLElement>('[data-upload-zone]');
+  const uploadInput = document.querySelector<HTMLInputElement>('[data-upload-input]');
+  const uploadButton = document.querySelector<HTMLButtonElement>('[data-upload-button]');
+  const uploadPreview = document.querySelector<HTMLElement>('[data-upload-preview]');
+  const imagesValue = document.querySelector<HTMLInputElement>('[data-images-value]');
 
   let newsItems = [];
+  let selectedImages = [];
 
   const escapeHtml = (value) =>
     String(value ?? '')
@@ -570,6 +707,100 @@ const configured = isAuthConfigured();
     return data;
   };
 
+  const requestFormData = async (url, body) => {
+    const response = await fetch(url, {
+      method: 'POST',
+      credentials: 'same-origin',
+      body,
+    });
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || data.ok === false) {
+      throw data;
+    }
+
+    return data;
+  };
+
+  const syncImagesField = () => {
+    if (imagesValue) {
+      imagesValue.value = JSON.stringify(selectedImages);
+    }
+  };
+
+  const renderImagePreview = () => {
+    if (!uploadPreview) return;
+
+    syncImagesField();
+
+    uploadPreview.innerHTML = selectedImages
+      .map(
+        (image, index) => `
+          <div class="admin-upload-thumb">
+            <img src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt || 'Изображение новости')}" />
+            <button
+              class="admin-upload-thumb__remove"
+              type="button"
+              data-remove-image="${index}"
+              aria-label="Удалить изображение"
+            >
+              ×
+            </button>
+          </div>
+        `,
+      )
+      .join('');
+  };
+
+  const setSelectedImages = (images) => {
+    selectedImages = images
+      .filter((image) => image?.src)
+      .map((image) => ({
+        src: String(image.src),
+        alt: String(image.alt || 'Изображение новости'),
+      }))
+      .slice(0, 12);
+    renderImagePreview();
+  };
+
+  const uploadFiles = async (fileList) => {
+    const files = Array.from(fileList ?? []).filter((file) =>
+      file.type?.startsWith('image/'),
+    );
+
+    if (files.length === 0) return;
+
+    const availableSlots = 12 - selectedImages.length;
+
+    if (availableSlots <= 0) {
+      setMessage(adminMessage, 'Можно добавить не больше 12 изображений.');
+      return;
+    }
+
+    const formData = new FormData();
+    files.slice(0, availableSlots).forEach((file) => formData.append('images', file));
+
+    try {
+      setMessage(adminMessage, 'Загружаем изображения...', 'success');
+      const data = await requestFormData('/api/admin/uploads', formData);
+      setSelectedImages([...selectedImages, ...(data.images ?? [])]);
+      setMessage(adminMessage, 'Изображения добавлены.', 'success');
+    } catch (error) {
+      const messages = {
+        no_files: 'Выберите изображения для загрузки.',
+        too_many_files: 'За один раз можно загрузить не больше 12 изображений.',
+        unsupported_file_type: 'Поддерживаются только JPG, PNG, WEBP и GIF.',
+        file_too_large: 'Размер одного изображения не должен превышать 20 МБ.',
+      };
+      setMessage(
+        adminMessage,
+        messages[error?.error] || 'Не удалось загрузить изображения.',
+      );
+    } finally {
+      if (uploadInput) uploadInput.value = '';
+    }
+  };
+
   const getFormData = () => {
     if (!newsForm) return null;
 
@@ -578,10 +809,8 @@ const configured = isAuthConfigured();
     return {
       id: String(data.get('id') ?? ''),
       title: String(data.get('title') ?? '').trim(),
-      slug: String(data.get('slug') ?? '').trim().toLowerCase(),
       date: String(data.get('date') ?? '').trim(),
-      image: String(data.get('image') ?? '').trim(),
-      imageAlt: String(data.get('imageAlt') ?? '').trim(),
+      images: selectedImages,
       excerpt: String(data.get('excerpt') ?? '').trim(),
       content: String(data.get('content') ?? '').trim(),
       isPublished: data.get('isPublished') === 'true',
@@ -594,6 +823,7 @@ const configured = isAuthConfigured();
       newsForm.elements.namedItem('id').value = '';
       newsForm.elements.namedItem('isPublished').value = 'true';
     }
+    setSelectedImages([]);
     if (formTitle) formTitle.textContent = 'Добавить новость';
   };
 
@@ -602,13 +832,15 @@ const configured = isAuthConfigured();
 
     newsForm.elements.namedItem('id').value = item.id;
     newsForm.elements.namedItem('title').value = item.title;
-    newsForm.elements.namedItem('slug').value = item.slug;
     newsForm.elements.namedItem('date').value = item.date;
-    newsForm.elements.namedItem('image').value = item.image;
-    newsForm.elements.namedItem('imageAlt').value = item.imageAlt;
     newsForm.elements.namedItem('excerpt').value = item.excerpt;
     newsForm.elements.namedItem('content').value = item.content;
     newsForm.elements.namedItem('isPublished').value = String(item.isPublished);
+    setSelectedImages(
+      item.images?.length
+        ? item.images
+        : [{ src: item.image, alt: item.imageAlt || item.title }],
+    );
     if (formTitle) formTitle.textContent = 'Редактировать новость';
     newsForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
@@ -747,6 +979,37 @@ const configured = isAuthConfigured();
 
   newButton?.addEventListener('click', resetForm);
   cancelButton?.addEventListener('click', resetForm);
+
+  uploadButton?.addEventListener('click', () => uploadInput?.click());
+  uploadInput?.addEventListener('change', () => uploadFiles(uploadInput.files));
+
+  ['dragenter', 'dragover'].forEach((eventName) => {
+    uploadZone?.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      uploadZone.classList.add('is-dragover');
+    });
+  });
+
+  ['dragleave', 'drop'].forEach((eventName) => {
+    uploadZone?.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      uploadZone.classList.remove('is-dragover');
+    });
+  });
+
+  uploadZone?.addEventListener('drop', (event) => {
+    uploadFiles(event.dataTransfer?.files);
+  });
+
+  uploadPreview?.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-remove-image]');
+    if (!button) return;
+
+    const index = Number(button.dataset.removeImage);
+    if (!Number.isInteger(index)) return;
+
+    setSelectedImages(selectedImages.filter((_, imageIndex) => imageIndex !== index));
+  });
 
   logoutButton?.addEventListener('click', async () => {
     await requestJson('/api/admin/logout', { method: 'POST' }).catch(() => null);
