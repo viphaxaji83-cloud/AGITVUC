@@ -1,0 +1,325 @@
+---
+import Icon from './ui/Icon.astro';
+
+interface Props {
+  videoSrc?: string;
+  posterSrc?: string;
+}
+
+const {
+  videoSrc = '/videos/BPLA_3%20Ptitsy%20Vysokogo%20Poleta.mp4',
+  posterSrc = '/hero-bpla-training-v4.webp',
+} = Astro.props;
+---
+
+<section
+  id="service-video"
+  class="video-hero anchor-offset"
+  aria-label="Видео о службе"
+  style={`--video-poster: url('${posterSrc}')`}
+  data-video-hero
+>
+  <video
+    class="video-hero__media"
+    poster={posterSrc}
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="metadata"
+    data-video-hero-media
+  >
+    <source data-src={videoSrc} type="video/mp4" />
+  </video>
+
+  <div class="video-hero__overlay" aria-hidden="true"></div>
+
+  <div class="video-hero__sound-panel" data-video-sound-panel>
+    <button
+      class="video-hero__sound"
+      type="button"
+      aria-pressed="false"
+      data-video-sound
+    >
+      <span class="video-hero__sound-icon video-hero__sound-icon--off">
+        <Icon name="volume-off" size={18} />
+      </span>
+      <span class="video-hero__sound-icon video-hero__sound-icon--on">
+        <Icon name="volume" size={18} />
+      </span>
+      <span data-video-sound-text>Нажмите, чтобы включить звук</span>
+    </button>
+
+    <label class="video-hero__volume">
+      <span>Громкость</span>
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value="80"
+        aria-label="Громкость видео"
+        data-video-volume
+      />
+    </label>
+  </div>
+</section>
+
+<style>
+  .video-hero {
+    position: relative;
+    isolation: isolate;
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow: hidden;
+    background: #060d1b;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .video-hero::before {
+    position: absolute;
+    inset: -28px;
+    z-index: -4;
+    display: none;
+    content: '';
+    background: #060d1b var(--video-poster) center / cover no-repeat;
+    filter: blur(22px) saturate(1.08) brightness(0.52);
+    transform: scale(1.04);
+  }
+
+  .video-hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -3;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    background: #060d1b;
+  }
+
+  .video-hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background:
+      linear-gradient(90deg, rgb(3 7 18 / 0.78) 0%, rgb(3 7 18 / 0.32) 54%, rgb(3 7 18 / 0.46) 100%),
+      linear-gradient(0deg, rgb(3 7 18 / 0.66) 0%, rgb(3 7 18 / 0.06) 48%, rgb(3 7 18 / 0.22) 100%);
+    pointer-events: none;
+  }
+
+  .video-hero__sound-panel {
+    position: absolute;
+    right: clamp(20px, 5vw, 88px);
+    bottom: clamp(22px, 5vw, 58px);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgb(255 255 255 / 0.2);
+    border-radius: 18px;
+    background: rgb(15 23 42 / 0.48);
+    padding: 8px;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 18px 44px rgb(0 0 0 / 0.22);
+  }
+
+  .video-hero__sound {
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: #fff;
+    padding: 0 10px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 500;
+    transition:
+      background-color 180ms ease,
+      border-color 180ms ease,
+      transform 180ms ease;
+  }
+
+  .video-hero__sound:hover {
+    background: rgb(15 23 42 / 0.64);
+    transform: translateY(-1px);
+  }
+
+  .video-hero__sound:active {
+    transform: translateY(0);
+  }
+
+  .video-hero__sound-icon {
+    display: inline-flex;
+  }
+
+  .video-hero__sound-icon--on {
+    display: none;
+  }
+
+  .video-hero[data-sound='on'] .video-hero__sound-icon--off {
+    display: none;
+  }
+
+  .video-hero[data-sound='on'] .video-hero__sound-icon--on {
+    display: inline-flex;
+  }
+
+  .video-hero__volume {
+    display: inline-flex;
+    min-width: 150px;
+    flex-direction: column;
+    gap: 6px;
+    border-left: 1px solid rgb(255 255 255 / 0.16);
+    padding: 0 10px 0 14px;
+    color: rgb(255 255 255 / 0.72);
+    cursor: default;
+    font-size: 0.68rem;
+    font-weight: 500;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .video-hero__volume input {
+    width: 150px;
+    accent-color: #fff;
+    cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    .video-hero::before {
+      display: block;
+    }
+
+    .video-hero__media {
+      object-fit: contain;
+      background: transparent;
+    }
+
+    .video-hero__overlay {
+      background:
+        linear-gradient(0deg, rgb(3 7 18 / 0.7) 0%, rgb(3 7 18 / 0.12) 45%, rgb(3 7 18 / 0.28) 100%),
+        rgb(3 7 18 / 0.14);
+    }
+
+    .video-hero__sound-panel {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const videoBlocks = document.querySelectorAll<HTMLElement>('[data-video-hero]');
+
+  videoBlocks.forEach((block) => {
+    const video = block.querySelector<HTMLVideoElement>('[data-video-hero-media]');
+    const source = video?.querySelector<HTMLSourceElement>('source[data-src]');
+    const soundPanel = block.querySelector<HTMLElement>('[data-video-sound-panel]');
+    const soundButton = block.querySelector<HTMLButtonElement>('[data-video-sound]');
+    const soundText = block.querySelector<HTMLElement>('[data-video-sound-text]');
+    const volumeRange = block.querySelector<HTMLInputElement>('[data-video-volume]');
+
+    if (
+      !video ||
+      !source ||
+      !soundPanel ||
+      !soundButton ||
+      !soundText ||
+      !volumeRange
+    ) return;
+
+    let loaded = false;
+    video.volume = Number(volumeRange.value) / 100;
+
+    const loadVideo = () => {
+      if (loaded) return;
+
+      const src = source.dataset.src;
+      if (!src) return;
+
+      source.src = src;
+      loaded = true;
+      video.load();
+    };
+
+    const playVideo = () => {
+      loadVideo();
+      video.play().catch(() => null);
+    };
+
+    const updateSoundState = () => {
+      const soundEnabled = !video.muted && video.volume > 0;
+      block.dataset.sound = soundEnabled ? 'on' : 'off';
+      soundButton.setAttribute('aria-pressed', String(soundEnabled));
+      volumeRange.value = String(Math.round(video.volume * 100));
+      soundText.textContent = soundEnabled
+        ? 'Нажмите, чтобы выключить звук'
+        : 'Нажмите, чтобы включить звук';
+    };
+
+    const toggleSound = () => {
+      playVideo();
+      video.muted = !video.muted;
+      if (!video.muted && video.volume === 0) {
+        video.volume = 0.8;
+      }
+      updateSoundState();
+    };
+
+    const setVolume = () => {
+      playVideo();
+      const volume = Number(volumeRange.value) / 100;
+      video.volume = Math.min(Math.max(volume, 0), 1);
+      video.muted = video.volume === 0;
+      updateSoundState();
+    };
+
+    const observeVideo = () => {
+      if (!('IntersectionObserver' in window)) {
+        playVideo();
+        return;
+      }
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              playVideo();
+              observer.disconnect();
+            }
+          });
+        },
+        { rootMargin: '420px 0px' },
+      );
+
+      observer.observe(block);
+    };
+
+    block.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('a, button, input, label')) return;
+      toggleSound();
+    });
+
+    soundPanel.addEventListener('click', (event) => {
+      event.stopPropagation();
+    });
+
+    soundButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      toggleSound();
+    });
+
+    volumeRange.addEventListener('input', setVolume);
+    volumeRange.addEventListener('change', setVolume);
+    video.addEventListener('volumechange', updateSoundState);
+    updateSoundState();
+    observeVideo();
+  });
+</script>

@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { site } from '../data/site';
+import ScrollTopButton from '../components/ScrollTopButton.astro';
 
 interface Props {
   title?: string;
@@ -84,5 +85,6 @@ const canonicalUrl =
   <body class:list={['min-h-screen flex flex-col', bodyClass]}>
     <a href="#main" class="skip-link">Перейти к основному содержимому</a>
     <slot />
+    <ScrollTopButton />
   </body>
 </html>
