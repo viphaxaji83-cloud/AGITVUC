@@ -26,6 +26,7 @@ const {
 const pageTitle = title ? `${title} — ${site.shortName}` : site.ogTitle;
 const canonicalUrl =
   canonical ?? new URL(Astro.url.pathname, Astro.site ?? 'https://example.university').toString();
+const shouldLoadJivo = !noindex;
 ---
 
 <!doctype html>
@@ -86,5 +87,6 @@ const canonicalUrl =
     <a href="#main" class="skip-link">Перейти к основному содержимому</a>
     <slot />
     <ScrollTopButton />
+    {shouldLoadJivo && <script is:inline src="https://code.jivo.ru/widget/H1IFYUa679" async></script>}
   </body>
 </html>
