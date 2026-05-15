@@ -1,11 +1,16 @@
 ---
 import Container from './ui/Container.astro';
 import Icon from './ui/Icon.astro';
-import { site } from '../data/site';
 import { contacts } from '../data/contacts';
 
 const year = new Date().getFullYear();
 const isHomePage = Astro.url.pathname === '/';
+const footerNav = [
+  { label: 'Условия службы', href: '#benefits' },
+  { label: 'Преимущества', href: '#education' },
+  { label: 'Возможности', href: '#finance' },
+  { label: 'Новости', href: '#news' },
+];
 const getFooterHref = (href: string) =>
   href.startsWith('#') && !isHomePage ? `/${href}` : href;
 ---
@@ -18,7 +23,7 @@ const getFooterHref = (href: string) =>
           <h2>Разделы</h2>
           <ul class="site-footer__nav">
           {
-            site.nav.map((item) => (
+            footerNav.map((item) => (
               <li>
                 <a href={getFooterHref(item.href)}>{item.label}</a>
               </li>

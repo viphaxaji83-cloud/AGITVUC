@@ -1,0 +1,244 @@
+---
+const partners = [
+  { label: 'Министерство обороны РФ', href: 'https://mil.ru/' },
+  { label: 'Военный учебный центр МГТУ', href: 'https://vuc.mkgtu.ru/' },
+  {
+    label: 'Общественная организация ветеранов Республики Адыгея',
+    href: 'https://sovetveteranov01.ru/',
+  },
+  {
+    label: 'Государственный фонд «Защитники Отечества»',
+    href: 'https://fzo.gov.ru/',
+  },
+  {
+    label: 'Военный комиссариат Республики Адыгея',
+    phone: '+7 800 200-22-06',
+  },
+  { label: 'Республика Адыгея', href: 'http://www.adygheya.ru/' },
+];
+---
+
+<section class="partners-ticker" aria-label="Партнеры">
+  <div class="partners-ticker__viewport">
+    <div class="partners-ticker__track">
+      <div class="partners-ticker__group">
+        {
+          partners.map((partner) =>
+            partner.href ? (
+              <a
+                class="partners-ticker__item"
+                href={partner.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {partner.label}
+              </a>
+            ) : (
+              <span class="partners-ticker__item partners-ticker__item--stacked">
+                <span>{partner.label}</span>
+                <span class="partners-ticker__phone">{partner.phone}</span>
+              </span>
+            )
+          )
+        }
+      </div>
+      <div class="partners-ticker__group" aria-hidden="true">
+        {
+          partners.map((partner) =>
+            partner.href ? (
+              <a
+                class="partners-ticker__item"
+                href={partner.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                tabindex="-1"
+              >
+                {partner.label}
+              </a>
+            ) : (
+              <span class="partners-ticker__item partners-ticker__item--stacked">
+                <span>{partner.label}</span>
+                <span class="partners-ticker__phone">{partner.phone}</span>
+              </span>
+            )
+          )
+        }
+      </div>
+    </div>
+  </div>
+  <div class="partners-ticker__bridge" aria-hidden="true"></div>
+</section>
+
+<style>
+  .partners-ticker {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: #fbfcff;
+    color: #004329;
+    padding-top: clamp(14px, 1.5vw, 24px);
+  }
+
+  .partners-ticker::before {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    content: '';
+    background:
+      linear-gradient(90deg, rgb(15 23 42 / 0.055) 1px, transparent 1px)
+        50% 0 / 96px 96px,
+      linear-gradient(0deg, rgb(15 23 42 / 0.055) 1px, transparent 1px)
+        50% 0 / 96px 96px,
+      repeating-linear-gradient(
+        132deg,
+        transparent 0 138px,
+        rgb(29 78 216 / 0.08) 139px 140px,
+        transparent 141px 280px
+      );
+    pointer-events: none;
+  }
+
+  .partners-ticker__viewport {
+    position: relative;
+    display: flex;
+    min-height: clamp(62px, 5.6vw, 76px);
+    align-items: center;
+    overflow: hidden;
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0,
+      #000 9%,
+      #000 91%,
+      transparent 100%
+    );
+  }
+
+  .partners-ticker__track {
+    display: flex;
+    width: max-content;
+    align-items: center;
+    animation: partners-scroll 34s linear infinite;
+    will-change: transform;
+  }
+
+  .partners-ticker__group {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: clamp(30px, 5vw, 72px);
+    padding-inline: clamp(20px, 4vw, 56px);
+  }
+
+  .partners-ticker__item {
+    flex: 0 0 auto;
+    color: inherit;
+    font-size: clamp(0.84rem, 0.95vw, 0.98rem);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: color 180ms ease;
+  }
+
+  .partners-ticker__item::before {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 14px;
+    border-radius: 999px;
+    background: #1d4ed8;
+    content: '';
+    vertical-align: 0.12em;
+  }
+
+  a.partners-ticker__item:hover {
+    color: #1d4ed8;
+  }
+
+  .partners-ticker__item--stacked {
+    display: inline-block;
+    line-height: 1.12;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .partners-ticker__phone {
+    display: block;
+    margin-top: 5px;
+    color: rgb(15 23 42 / 0.68);
+    font-size: 0.78em;
+    letter-spacing: 0.06em;
+  }
+
+  .partners-ticker__bridge {
+    min-height: clamp(20px, 2.4vw, 34px);
+  }
+
+  :global(html[data-theme='dark']) .partners-ticker {
+    background: #060d1b;
+    color: #f8fafc;
+  }
+
+  :global(html[data-theme='dark']) .partners-ticker::before {
+    background:
+      linear-gradient(90deg, rgb(148 163 184 / 0.06) 1px, transparent 1px)
+        50% 0 / 96px 96px,
+      linear-gradient(0deg, rgb(148 163 184 / 0.06) 1px, transparent 1px)
+        50% 0 / 96px 96px,
+      repeating-linear-gradient(
+        132deg,
+        transparent 0 138px,
+        rgb(96 165 250 / 0.08) 139px 140px,
+        transparent 141px 280px
+      );
+  }
+
+  :global(html[data-theme='dark']) .partners-ticker__item::before {
+    background: #93c5fd;
+  }
+
+  :global(html[data-theme='dark']) a.partners-ticker__item:hover {
+    color: #bfdbfe;
+  }
+
+  :global(html[data-theme='dark']) .partners-ticker__phone {
+    color: rgb(226 232 240 / 0.7);
+  }
+
+  @media (max-width: 640px) {
+    .partners-ticker__viewport {
+      min-height: 58px;
+    }
+
+    .partners-ticker__bridge {
+      min-height: 24px;
+    }
+
+    .partners-ticker__group {
+      gap: 28px;
+    }
+
+    .partners-ticker__track {
+      animation-duration: 28s;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .partners-ticker__track {
+      animation: none;
+      transform: none;
+    }
+  }
+
+  @keyframes partners-scroll {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
+    }
+  }
+</style>

@@ -5,8 +5,13 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://example.university',
+  site: 'https://bpla.mkgtu.ru/',
   output: 'server',
+  vite: {
+    server: {
+      allowedHosts: ['bpla.mkgtu.ru'],
+    },
+  },
   adapter: node({
     mode: 'standalone',
   }),

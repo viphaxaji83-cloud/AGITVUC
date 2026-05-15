@@ -4,6 +4,7 @@ import {
   randomBytes,
   timingSafeEqual,
 } from 'node:crypto';
+import { getRuntimeEnv } from './runtimeEnv';
 
 const SESSION_COOKIE = 'agitvuc_admin_session';
 const SESSION_TTL_SECONDS = 60 * 60 * 8;
@@ -19,7 +20,7 @@ interface SessionPayload {
   exp: number;
 }
 
-const getEnv = (key: string) => process.env[key] ?? import.meta.env[key];
+const getEnv = getRuntimeEnv;
 
 const base64Url = (value: Buffer | string) =>
   Buffer.from(value)

@@ -1,7 +1,6 @@
 ---
 import '../styles/global.css';
 import { site } from '../data/site';
-import ScrollTopButton from '../components/ScrollTopButton.astro';
 
 interface Props {
   title?: string;
@@ -86,7 +85,6 @@ const shouldLoadJivo = !noindex;
   <body class:list={['min-h-screen flex flex-col', bodyClass]}>
     <a href="#main" class="skip-link">Перейти к основному содержимому</a>
     <slot />
-    <ScrollTopButton />
     {shouldLoadJivo && <script is:inline src="https://code.jivo.ru/widget/H1IFYUa679" async></script>}
   </body>
 </html>

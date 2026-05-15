@@ -8,10 +8,12 @@ import {
   type NewsImage,
   type NewsItem,
 } from '../news';
+import { getRuntimeEnv } from './runtimeEnv';
 
 const slugPattern = /^\d{6,20}$/;
-const storagePath = process.env.NEWS_STORAGE_PATH
-  ? path.resolve(process.env.NEWS_STORAGE_PATH)
+const configuredStoragePath = getRuntimeEnv('NEWS_STORAGE_PATH');
+const storagePath = configuredStoragePath
+  ? path.resolve(configuredStoragePath)
   : path.resolve(process.cwd(), 'storage/news.json');
 
 export class NewsValidationError extends Error {

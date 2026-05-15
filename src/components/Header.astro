@@ -9,7 +9,10 @@ const getHeaderHref = (href: string) =>
   href.startsWith('#') && !isHomePage ? `/${href}` : href;
 const contactHref = isHomePage ? '#contacts' : '/#contacts';
 const headerNav = site.nav.filter(
-  (item) => item.href !== '#hero' && item.href !== '#contacts',
+  (item) =>
+    item.href !== '#hero' &&
+    item.href !== '#contacts' &&
+    item.href !== '#faq',
 );
 const headerNavWithNews = [
   ...headerNav,

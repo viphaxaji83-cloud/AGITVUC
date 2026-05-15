@@ -47,7 +47,6 @@ const {
       <span class="video-hero__sound-icon video-hero__sound-icon--on">
         <Icon name="volume" size={18} />
       </span>
-      <span data-video-sound-text>Нажмите, чтобы включить звук</span>
     </button>
 
     <label class="video-hero__volume">
@@ -222,7 +221,6 @@ const {
     const source = video?.querySelector<HTMLSourceElement>('source[data-src]');
     const soundPanel = block.querySelector<HTMLElement>('[data-video-sound-panel]');
     const soundButton = block.querySelector<HTMLButtonElement>('[data-video-sound]');
-    const soundText = block.querySelector<HTMLElement>('[data-video-sound-text]');
     const volumeRange = block.querySelector<HTMLInputElement>('[data-video-volume]');
 
     if (
@@ -230,7 +228,6 @@ const {
       !source ||
       !soundPanel ||
       !soundButton ||
-      !soundText ||
       !volumeRange
     ) return;
 
@@ -257,10 +254,11 @@ const {
       const soundEnabled = !video.muted && video.volume > 0;
       block.dataset.sound = soundEnabled ? 'on' : 'off';
       soundButton.setAttribute('aria-pressed', String(soundEnabled));
+      soundButton.setAttribute(
+        'aria-label',
+        soundEnabled ? 'Выключить звук' : 'Включить звук',
+      );
       volumeRange.value = String(Math.round(video.volume * 100));
-      soundText.textContent = soundEnabled
-        ? 'Нажмите, чтобы выключить звук'
-        : 'Нажмите, чтобы включить звук';
     };
 
     const toggleSound = () => {

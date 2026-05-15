@@ -4,6 +4,7 @@ import path from 'node:path';
 import type { APIRoute } from 'astro';
 import { requireAdminSession } from '../../../lib/server/auth';
 import { json, methodNotAllowed } from '../../../lib/server/responses';
+import { getRuntimeEnv } from '../../../lib/server/runtimeEnv';
 
 export const prerender = false;
 
@@ -16,14 +17,15 @@ const allowedTypes = new Map([
   ['image/gif', 'gif'],
 ]);
 
-const uploadDirectory = process.env.NEWS_UPLOAD_DIR
-  ? path.resolve(process.env.NEWS_UPLOAD_DIR)
+const configuredUploadDirectory = getRuntimeEnv('NEWS_UPLOAD_DIR');
+const uploadDirectory = configuredUploadDirectory
+  ? path.resolve(configuredUploadDirectory)
   : path.resolve(
       process.cwd(),
       import.meta.env.DEV ? 'public/uploads/news' : 'dist/client/uploads/news',
     );
 
-const publicBase = (process.env.NEWS_UPLOAD_PUBLIC_BASE || '/uploads/news').replace(
+const publicBase = (getRuntimeEnv('NEWS_UPLOAD_PUBLIC_BASE') || '/uploads/news').replace(
   /\/+$/,
   '',
 );
