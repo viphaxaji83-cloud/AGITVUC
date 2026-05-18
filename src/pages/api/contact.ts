@@ -16,6 +16,10 @@ type ContactPayload = {
   receivedAt: string;
 };
 
+const emailTitle = 'Новое обращение с сайта bpla.mkgtu.ru';
+const replyNotice =
+  'На это сообщение не отвечать, ответ присылать на почту указанную в заявке';
+
 const getEnv = (key: string) => getRuntimeEnv(key)?.trim();
 const getFirstEnv = (...keys: string[]) => {
   for (const key of keys) {
@@ -72,9 +76,23 @@ const escapeHtml = (value: string) =>
 
 const formatValue = (value: string) => value || '-';
 
+const studentStatusLabels: Record<string, string> = {
+  bachelor: 'Бакалавриат',
+  specialist: 'Специалитет',
+  master: 'Магистратура',
+  postgrad: 'Аспирантура',
+  college: 'Колледж / СПО',
+  other: 'Другое',
+};
+
+const formatStudentStatus = (value: string) =>
+  studentStatusLabels[value] ?? value;
+
 const buildTextMessage = (payload: ContactPayload) =>
   [
-    'Новая заявка с сайта bpla.mkgtu.ru',
+    replyNotice,
+    '',
+    emailTitle,
     '',
     `Имя: ${formatValue(payload.name)}`,
     `Телефон: ${formatValue(payload.phone)}`,
@@ -84,6 +102,8 @@ const buildTextMessage = (payload: ContactPayload) =>
     `Комментарий: ${formatValue(payload.comment)}`,
     `Согласие на обработку ПДн: ${payload.consent ? 'Да' : 'Нет'}`,
     `Дата получения: ${payload.receivedAt}`,
+    '',
+    replyNotice,
   ].join('\n');
 
 const buildHtmlMessage = (payload: ContactPayload) => {
@@ -98,9 +118,12 @@ const buildHtmlMessage = (payload: ContactPayload) => {
     ['Дата получения', payload.receivedAt],
   ];
 
+  const noticeHtml = escapeHtml(replyNotice);
+
   return `
     <div style="font-family: Arial, sans-serif; color: #0f172a;">
-      <h2 style="margin: 0 0 16px;">Новая заявка с сайта bpla.mkgtu.ru</h2>
+      <p style="margin: 0 0 16px; color: #b80008; font-weight: 700;">${noticeHtml}</p>
+      <h2 style="margin: 0 0 16px;">${escapeHtml(emailTitle)}</h2>
       <table cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
         ${rows
           .map(
@@ -113,6 +136,7 @@ const buildHtmlMessage = (payload: ContactPayload) => {
           )
           .join('')}
       </table>
+      <p style="margin: 16px 0 0; color: #b80008; font-weight: 700;">${noticeHtml}</p>
     </div>
   `;
 };
@@ -149,7 +173,7 @@ const sendContactEmail = async (payload: ContactPayload) => {
     from,
     to,
     replyTo: isLikelyEmail(payload.email) ? payload.email : undefined,
-    subject: 'Новая заявка с сайта bpla.mkgtu.ru',
+    subject: emailTitle,
     text: buildTextMessage(payload),
     html: buildHtmlMessage(payload),
   });
@@ -164,7 +188,7 @@ export const POST: APIRoute = async ({ request }) => {
       phone: String(formData.get('phone') ?? '').trim(),
       email: String(formData.get('email') ?? '').trim(),
       direction: String(formData.get('direction') ?? '').trim(),
-      status: String(formData.get('status') ?? '').trim(),
+      status: formatStudentStatus(String(formData.get('status') ?? '').trim()),
       comment: String(formData.get('comment') ?? '').trim(),
       consent: formData.get('consent') === 'on',
       receivedAt: new Date().toLocaleString('ru-RU', {
