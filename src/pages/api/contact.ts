@@ -1,39 +1,165 @@
 import type { APIRoute } from 'astro';
+import { createTransport } from 'nodemailer';
+import { getRuntimeEnv } from '../../lib/server/runtimeEnv';
+import { getContactRecipientEmail } from '../../lib/server/settingsStore';
 
 export const prerender = false;
 
-export const GET: APIRoute = () =>
-  new Response(
-    JSON.stringify({ ok: false, error: 'method_not_allowed' }),
-    {
-      status: 405,
-      headers: {
-        'Content-Type': 'application/json',
-        Allow: 'POST',
-      },
+type ContactPayload = {
+  name: string;
+  phone: string;
+  email: string;
+  direction: string;
+  status: string;
+  comment: string;
+  consent: boolean;
+  receivedAt: string;
+};
+
+const getEnv = (key: string) => getRuntimeEnv(key)?.trim();
+const getFirstEnv = (...keys: string[]) => {
+  for (const key of keys) {
+    const value = getEnv(key);
+
+    if (value) return value;
+  }
+
+  return undefined;
+};
+
+const parseBoolean = (value: string | undefined) => {
+  if (!value) return undefined;
+
+  const normalized = value.toLowerCase();
+
+  if (['1', 'true', 'yes', 'on'].includes(normalized)) return true;
+  if (['0', 'false', 'no', 'off'].includes(normalized)) return false;
+
+  return undefined;
+};
+
+const json = (body: Record<string, unknown>, status = 200, extraHeaders = {}) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      ...extraHeaders,
     },
+  });
+
+export const GET: APIRoute = () =>
+  json(
+    { ok: false, error: 'method_not_allowed' },
+    405,
+    { Allow: 'POST' },
   );
 
-/**
- * Stub endpoint for the contact form.
- *
- * Сейчас не передаёт данные во внешние системы. Здесь нужно подключить
- * настоящий backend (CRM, SMTP, очередь и т.д.):
- *
- * 1. Валидация входных данных и согласия на обработку ПДн.
- * 2. Антиспам (rate-limit, honeypot, токен).
- * 3. Передача в целевую систему.
- * 4. Журналирование.
- *
- * При статической сборке (`output: 'static'`) этот route недоступен —
- * включите режим `server` или `hybrid` в astro.config и адаптер по выбору
- * (Node, Vercel, Cloudflare и т.п.) перед использованием на проде.
- */
+const isLikelyEmail = (value: string) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+const escapeHtml = (value: string) =>
+  value.replace(/[&<>"']/g, (char) => {
+    const replacements: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+    };
+
+    return replacements[char] ?? char;
+  });
+
+const formatValue = (value: string) => value || '-';
+
+const buildTextMessage = (payload: ContactPayload) =>
+  [
+    'Новая заявка с сайта bpla.mkgtu.ru',
+    '',
+    `Имя: ${formatValue(payload.name)}`,
+    `Телефон: ${formatValue(payload.phone)}`,
+    `Email: ${formatValue(payload.email)}`,
+    `Статус студента: ${formatValue(payload.status)}`,
+    `Направление: ${formatValue(payload.direction)}`,
+    `Комментарий: ${formatValue(payload.comment)}`,
+    `Согласие на обработку ПДн: ${payload.consent ? 'Да' : 'Нет'}`,
+    `Дата получения: ${payload.receivedAt}`,
+  ].join('\n');
+
+const buildHtmlMessage = (payload: ContactPayload) => {
+  const rows = [
+    ['Имя', payload.name],
+    ['Телефон', payload.phone],
+    ['Email', payload.email],
+    ['Статус студента', payload.status],
+    ['Направление', payload.direction],
+    ['Комментарий', payload.comment],
+    ['Согласие на обработку ПДн', payload.consent ? 'Да' : 'Нет'],
+    ['Дата получения', payload.receivedAt],
+  ];
+
+  return `
+    <div style="font-family: Arial, sans-serif; color: #0f172a;">
+      <h2 style="margin: 0 0 16px;">Новая заявка с сайта bpla.mkgtu.ru</h2>
+      <table cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+        ${rows
+          .map(
+            ([label, value]) => `
+              <tr>
+                <td style="border: 1px solid #e2e8f0; font-weight: 700;">${escapeHtml(label)}</td>
+                <td style="border: 1px solid #e2e8f0;">${escapeHtml(formatValue(value))}</td>
+              </tr>
+            `,
+          )
+          .join('')}
+      </table>
+    </div>
+  `;
+};
+
+const getSmtpConfig = async () => {
+  const host = getEnv('SMTP_HOST');
+  const port = Number.parseInt(getEnv('SMTP_PORT') ?? '465', 10);
+  const user = getEnv('SMTP_USER');
+  const pass = getFirstEnv('SMTP_PASS', 'SMTP_PASSWORD');
+  const from = getFirstEnv('MAIL_FROM', 'SMTP_FROM') ?? user;
+  const secure = parseBoolean(getEnv('SMTP_SECURE')) ?? port === 465;
+  const useTls = parseBoolean(getEnv('SMTP_USE_TLS'));
+
+  if (!host || !from) {
+    throw new Error('SMTP_HOST and MAIL_FROM, SMTP_FROM or SMTP_USER are required');
+  }
+
+  return {
+    host,
+    port,
+    secure,
+    requireTLS: !secure && useTls ? true : undefined,
+    auth: user && pass ? { user, pass } : undefined,
+    from,
+    to: await getContactRecipientEmail(),
+  };
+};
+
+const sendContactEmail = async (payload: ContactPayload) => {
+  const { from, to, ...transportConfig } = await getSmtpConfig();
+  const transporter = createTransport(transportConfig);
+
+  await transporter.sendMail({
+    from,
+    to,
+    replyTo: isLikelyEmail(payload.email) ? payload.email : undefined,
+    subject: 'Новая заявка с сайта bpla.mkgtu.ru',
+    text: buildTextMessage(payload),
+    html: buildHtmlMessage(payload),
+  });
+};
+
 export const POST: APIRoute = async ({ request }) => {
   try {
     const formData = await request.formData();
 
-    const payload = {
+    const payload: ContactPayload = {
       name: String(formData.get('name') ?? '').trim(),
       phone: String(formData.get('phone') ?? '').trim(),
       email: String(formData.get('email') ?? '').trim(),
@@ -41,46 +167,27 @@ export const POST: APIRoute = async ({ request }) => {
       status: String(formData.get('status') ?? '').trim(),
       comment: String(formData.get('comment') ?? '').trim(),
       consent: formData.get('consent') === 'on',
-      receivedAt: new Date().toISOString(),
+      receivedAt: new Date().toLocaleString('ru-RU', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+        timeZone: 'Europe/Moscow',
+      }),
     };
 
     if (!payload.name || !payload.phone) {
-      return new Response(
-        JSON.stringify({ ok: false, error: 'invalid_input' }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        },
-      );
+      return json({ ok: false, error: 'invalid_input' }, 400);
     }
 
     if (!payload.consent) {
-      return new Response(
-        JSON.stringify({ ok: false, error: 'consent_required' }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        },
-      );
+      return json({ ok: false, error: 'consent_required' }, 400);
     }
 
-    // TODO(api): подключить отправку в целевой backend / CRM / email.
-    // Пока что просто возвращаем подтверждение приёма.
-    if (import.meta.env.DEV) {
-      console.log('[contact-form:stub] received', payload);
-    }
+    await sendContactEmail(payload);
 
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return json({ ok: true });
   } catch (err) {
-    return new Response(
-      JSON.stringify({ ok: false, error: 'unexpected' }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      },
-    );
+    console.error('[contact-form] failed to send email', err);
+
+    return json({ ok: false, error: 'email_send_failed' }, 500);
   }
 };

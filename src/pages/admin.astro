@@ -80,6 +80,7 @@ const configured = isAuthConfigured();
           <p class="admin-message" data-admin-message aria-live="polite"></p>
 
           <div class="admin-layout">
+            <div class="admin-layout__main">
             <section class="admin-card admin-card--form">
               <div class="admin-card__head">
                 <div>
@@ -165,6 +166,33 @@ const configured = isAuthConfigured();
                 </div>
               </form>
             </section>
+
+            <section class="admin-card admin-settings" aria-labelledby="admin-settings-title">
+              <div class="admin-card__head">
+                <div>
+                  <p class="admin-eyebrow">Настройки формы</p>
+                  <h2 id="admin-settings-title">Получатель заявок</h2>
+                </div>
+              </div>
+
+              <form class="admin-form admin-settings__form" data-settings-form>
+                <label>
+                  <span>Email для заявок *</span>
+                  <input
+                    name="contactEmail"
+                    type="email"
+                    autocomplete="email"
+                    required
+                    data-settings-email
+                  />
+                </label>
+                <button class="admin-primary" type="submit">
+                  Сохранить
+                </button>
+                <p class="admin-message" data-settings-message aria-live="polite"></p>
+              </form>
+            </section>
+            </div>
 
             <section class="admin-card admin-card--list">
               <div class="admin-card__head">
@@ -349,6 +377,23 @@ const configured = isAuthConfigured();
     align-items: start;
     gap: clamp(14px, 1.7vw, 24px);
     margin-top: 18px;
+  }
+
+  .admin-layout__main {
+    display: grid;
+    min-width: 0;
+    gap: 18px;
+  }
+
+  .admin-settings__form {
+    grid-template-columns: minmax(260px, 1fr) auto;
+    align-items: end;
+    gap: 12px;
+  }
+
+  .admin-settings__form .admin-message {
+    grid-column: 1 / -1;
+    margin-top: 0;
   }
 
   .admin-card {
@@ -633,7 +678,8 @@ const configured = isAuthConfigured();
     }
 
     .admin-card__head,
-    .admin-form__grid {
+    .admin-form__grid,
+    .admin-settings__form {
       grid-template-columns: 1fr;
     }
 
@@ -661,6 +707,9 @@ const configured = isAuthConfigured();
   const newsList = document.querySelector<HTMLElement>('[data-news-list]');
   const newsCount = document.querySelector<HTMLElement>('[data-news-count]');
   const adminMessage = document.querySelector<HTMLElement>('[data-admin-message]');
+  const settingsForm = document.querySelector<HTMLFormElement>('[data-settings-form]');
+  const settingsEmail = document.querySelector<HTMLInputElement>('[data-settings-email]');
+  const settingsMessage = document.querySelector<HTMLElement>('[data-settings-message]');
   const formTitle = document.querySelector<HTMLElement>('[data-form-title]');
   const newButton = document.querySelector<HTMLButtonElement>('[data-new-news]');
   const cancelButton = document.querySelector<HTMLButtonElement>('[data-cancel-edit]');
@@ -898,6 +947,18 @@ const configured = isAuthConfigured();
     }
   };
 
+  const loadSettings = async () => {
+    if (!adminApp || !settingsEmail) return;
+
+    try {
+      const data = await requestJson('/api/admin/settings');
+      settingsEmail.value = data.settings?.contactEmail ?? '';
+      setMessage(settingsMessage, '', 'success');
+    } catch {
+      setMessage(settingsMessage, 'Не удалось загрузить настройки формы.');
+    }
+  };
+
   loginForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
     const data = new FormData(loginForm);
@@ -918,6 +979,25 @@ const configured = isAuthConfigured();
           ? 'Авторизация не настроена в .env'
           : 'Неверный логин или пароль';
       setMessage(loginMessage, message);
+    }
+  });
+
+  settingsForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const contactEmail = settingsEmail?.value.trim() ?? '';
+
+    try {
+      setMessage(settingsMessage, 'Сохраняем...', 'success');
+      const data = await requestJson('/api/admin/settings', {
+        method: 'PUT',
+        body: JSON.stringify({ contactEmail }),
+      });
+      if (settingsEmail) settingsEmail.value = data.settings?.contactEmail ?? contactEmail;
+      setMessage(settingsMessage, 'Email для заявок сохранен.', 'success');
+    } catch (error) {
+      const errors = error?.errors ? Object.values(error.errors).join(' ') : '';
+      setMessage(settingsMessage, errors || 'Не удалось сохранить настройки формы.');
     }
   });
 
@@ -1017,5 +1097,6 @@ const configured = isAuthConfigured();
   });
 
   resetForm();
+  loadSettings();
   loadNews();
 </script>
