@@ -99,15 +99,20 @@ import Icon from './ui/Icon.astro';
       position: relative;
       isolation: isolate;
       display: block;
-      overflow: hidden;
+      overflow: visible;
       margin-top: -24px;
       padding: 0 0 34px;
-      background: #fbfcff;
+      background: transparent;
+    }
+
+    .consultation-cta::before {
+      display: none;
     }
 
     .consultation-cta__button {
       width: min(100%, 320px);
       padding-inline: 22px;
+      box-shadow: 0 12px 26px rgb(29 78 216 / 0.18);
     }
   }
 </style>

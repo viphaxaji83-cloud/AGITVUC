@@ -192,19 +192,25 @@ const {
   }
 
   @media (max-width: 768px) {
+    .video-hero {
+      min-height: 0;
+      height: auto;
+      aspect-ratio: var(--video-aspect, 16 / 9);
+      background: #060d1b;
+      cursor: default;
+    }
+
     .video-hero::before {
-      display: block;
+      display: none;
     }
 
     .video-hero__media {
       object-fit: contain;
-      background: transparent;
+      background: #060d1b;
     }
 
     .video-hero__overlay {
-      background:
-        linear-gradient(0deg, rgb(3 7 18 / 0.7) 0%, rgb(3 7 18 / 0.12) 45%, rgb(3 7 18 / 0.28) 100%),
-        rgb(3 7 18 / 0.14);
+      display: none;
     }
 
     .video-hero__sound-panel {
@@ -259,6 +265,11 @@ const {
         soundEnabled ? 'Выключить звук' : 'Включить звук',
       );
       volumeRange.value = String(Math.round(video.volume * 100));
+    };
+
+    const updateVideoAspect = () => {
+      if (!video.videoWidth || !video.videoHeight) return;
+      block.style.setProperty('--video-aspect', `${video.videoWidth} / ${video.videoHeight}`);
     };
 
     const toggleSound = () => {
@@ -316,7 +327,9 @@ const {
 
     volumeRange.addEventListener('input', setVolume);
     volumeRange.addEventListener('change', setVolume);
+    video.addEventListener('loadedmetadata', updateVideoAspect);
     video.addEventListener('volumechange', updateSoundState);
+    updateVideoAspect();
     updateSoundState();
     observeVideo();
   });
