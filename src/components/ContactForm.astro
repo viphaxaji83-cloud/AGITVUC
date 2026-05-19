@@ -387,6 +387,10 @@ import { contacts } from '../data/contacts';
   }
 
   @media (max-width: 640px) {
+    :global(.contact-section)::after {
+      display: none;
+    }
+
     :global(.contact-row) {
       padding: 6px 0;
     }

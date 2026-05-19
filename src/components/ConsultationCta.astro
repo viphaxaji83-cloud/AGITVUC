@@ -1,0 +1,113 @@
+---
+import Container from './ui/Container.astro';
+import Icon from './ui/Icon.astro';
+---
+
+<section class="consultation-cta" aria-label="Получить консультацию">
+  <Container class="consultation-cta__inner">
+    <a class="consultation-cta__button" href="#contacts">
+      Получить консультацию
+      <Icon name="arrow-right" size={20} />
+    </a>
+  </Container>
+</section>
+
+<style>
+  .consultation-cta {
+    display: none;
+  }
+
+  .consultation-cta::before {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    content: '';
+    background:
+      linear-gradient(90deg, rgb(15 23 42 / 0.075) 1px, transparent 1px)
+        50% 0 / 96px 96px,
+      linear-gradient(0deg, rgb(15 23 42 / 0.075) 1px, transparent 1px)
+        50% 0 / 96px 96px,
+      repeating-linear-gradient(
+        132deg,
+        transparent 0 138px,
+        rgb(29 78 216 / 0.105) 139px 140px,
+        transparent 141px 280px
+      );
+    opacity: 0.92;
+    pointer-events: none;
+  }
+
+  :global(.consultation-cta__inner) {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .consultation-cta__button {
+    display: inline-flex;
+    min-height: 52px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 999px;
+    background: #1d4ed8;
+    padding: 0 28px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: none;
+    box-shadow: 0 18px 38px rgb(29 78 216 / 0.24);
+    transition:
+      background-color 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms ease;
+  }
+
+  .consultation-cta__button:hover {
+    background: #1e40af;
+    box-shadow: 0 22px 44px rgb(29 78 216 / 0.3);
+    transform: translateY(-2px);
+  }
+
+  .consultation-cta__button:active {
+    transform: translateY(0);
+  }
+
+  :global(html[data-theme='dark']) .consultation-cta {
+    background: #060d1b;
+  }
+
+  :global(html[data-theme='dark']) .consultation-cta::before {
+    background:
+      linear-gradient(90deg, rgb(148 163 184 / 0.08) 1px, transparent 1px)
+        50% 0 / 96px 96px,
+      linear-gradient(0deg, rgb(148 163 184 / 0.08) 1px, transparent 1px)
+        50% 0 / 96px 96px,
+      repeating-linear-gradient(
+        132deg,
+        transparent 0 138px,
+        rgb(96 165 250 / 0.12) 139px 140px,
+        transparent 141px 280px
+      );
+    opacity: 0.82;
+  }
+
+  @media (max-width: 640px) {
+    .consultation-cta {
+      position: relative;
+      isolation: isolate;
+      display: block;
+      overflow: hidden;
+      margin-top: -24px;
+      padding: 0 0 34px;
+      background: #fbfcff;
+    }
+
+    .consultation-cta__button {
+      width: min(100%, 320px);
+      padding-inline: 22px;
+    }
+  }
+</style>
